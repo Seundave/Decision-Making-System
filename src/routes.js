@@ -12,6 +12,8 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ReportingPage from './pages/ReportingPage';
 import SettingsPage from './pages/SettingsPage';
+import StudentProfile from './pages/StudentProfile';
+// import StaffProfile from './pages/StaffProfile';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +30,8 @@ export default function Router() {
         { path: 'category', element: <CategoriesPage /> },
         { path: 'reporting', element: <ReportingPage /> },
         { path: 'settings', element: <SettingsPage /> },
+        { path: 'profile/{row.id}', element: <StudentProfile /> },
+        // { path: 'staff', element: <StaffProfile /> }
         // { path: 'blog', element: <BlogPage /> },
       ],
     },

@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import '../user.css'
 // @mui
 import {
   Card,
@@ -74,6 +75,15 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+  const [showPopup, setShowPopup] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    department: '',
+    role: '',
+    email: '',
+    password: ''
+  });
+  
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -126,6 +136,30 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
+  const handleClickNewUser =()=>{
+    setShowPopup(true);
+  }
+
+  const handleChange = (selectedOptions) => {
+    // Handle selected options
+    setFormData(selectedOptions);
+    console.log(selectedOptions);
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Handle form submission or further processing of the form data
+    console.log(formData);
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -157,12 +191,12 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill"/>}>
             New User
           </Button>
         </Stack>
 
-        <Card>
+        <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
@@ -249,6 +283,8 @@ export default function UserPage() {
             </TableContainer>
           </Scrollbar>
 
+         
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -258,6 +294,75 @@ export default function UserPage() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
+
+
+          {showPopup && (
+            <div className="user-popup">
+              <div className="user-form">
+                <form className="form" onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="name">Name:</label>
+                    <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required />
+                  </div>
+                  
+                  <div className="role-group">
+                    <label htmlFor="email">Role:</label>
+                    <select
+                          id="role"
+                          name="role"
+                          value={formData.value}
+                          onChange={handleChange}
+                          required
+                      >
+                          <option value="">Enter value</option>
+                          <option value="john@example.com">john@example.com</option>
+                          <option value="jane@example.com">jane@example.com</option>
+                          <option value="mike@example.com">mike@example.com</option>
+                    </select>
+                  </div>
+
+                  <div className="role-group">
+                    <label htmlFor="email">Department:</label>
+                    <select
+                          id="role"
+                          name="role"
+                          value={formData.value}
+                          onChange={handleChange}
+                          required
+                      >
+                          <option value="">Enter value</option>
+                          <option value="john@example.com">john@example.com</option>
+                          <option value="jane@example.com">jane@example.com</option>
+                          <option value="mike@example.com">mike@example.com</option>
+                    </select>
+                  </div>
+                  
+                  {/* <div className="form-group">
+                    <label htmlFor="department">Department:</label>
+                    <input type="text" id="department" name="department" value={formData.department} onChange={handleInputChange} required />
+                  </div> */}
+                  
+                  <div className="form-group">
+                    <label htmlFor="email">Email:</label>
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} required />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="password">Password:</label>
+                    <input type="password" id="password" name="password" value={formData.password} onChange={handleInputChange} required />
+                  </div>
+                  
+                  
+                </form>
+                <div className='submit-btn'>
+                  <button type="submit" className='newuser-button'>Create new user</button>
+                  <button className="close-button" onClick={() => setShowPopup(false)}>
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+                )}
         </Card>
       </Container>
 

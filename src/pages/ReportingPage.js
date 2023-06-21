@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import { Helmet } from 'react-helmet-async';
 import '../form.css'
@@ -29,6 +30,20 @@ const options = [
     { value: 'Faculty', label: 'Faculty' },
   ];
 
+  // const Table = () => {
+  //   Mock data for the table
+  //   const tableData = [
+  //     { id: 1, firstName: 'John', lastName: 'Doe', gender:'Male', faculty:'Technology' },
+  //     { id: 2, firstName: 'Jane', lastName: 'Smith', gender:'Female', faculty:'Science'},
+  //     { id: 3, firstName: 'Bob', lastName:'Johnson', gender:'Male', faculty:'Arts' },
+  //   ];
+  // }
+
+  const tableData = [
+    { id: 1, firstName: 'John', lastName: 'Doe', gender:'Male', faculty:'Technology' },
+    { id: 2, firstName: 'Jane', lastName: 'Smith', gender:'Female', faculty:'Science'},
+    { id: 3, firstName: 'Bob', lastName:'Johnson', gender:'Male', faculty:'Arts' },
+  ];
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
@@ -70,14 +85,7 @@ export default function BlogPage() {
       
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Report Generation
-          </Typography>
-          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Post
-          </Button> */}
-        </Stack>
+        
 
         {/* <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
           <BlogPostsSearch posts={POSTS} />
@@ -91,6 +99,20 @@ export default function BlogPage() {
         </Grid> */}
 
         {/* Category selection */}
+       
+
+        <div className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
+            {/* <h2>Contact Form</h2> */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+              <Typography variant="h4" gutterBottom>
+                Report Generation
+              </Typography>
+              {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+                New Post
+              </Button> */}
+            </Stack>
+        
+
         <div className="category-selection">
             <select 
                 id="email"
@@ -106,8 +128,7 @@ export default function BlogPage() {
             </select>
         </div>
 
-        <div className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
-            {/* <h2>Contact Form</h2> */}
+
             <form onSubmit={handleSubmit}>
                 <div className="form-group multiselect">
                     <label htmlFor="name">Report Fields</label>
@@ -211,10 +232,54 @@ export default function BlogPage() {
                 </div>
                 {showPopup && (
                     <div className="popup">
-                    <h2>Popup Content</h2>
-                    <button className="close-button" onClick={() => setShowPopup(false)}>
-                        Close
-                    </button>
+                      <div className="report-container">
+                      <h2>Report</h2>
+                      <div className="table-container">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Id</th>
+                              <th>First Name</th>
+                              <th>Last Name</th>
+                              <th>Gender</th>
+                              <th>Faculty</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+
+                            {tableData.map((row) => (
+                              <tr key={row.id}>
+                                <td>{row.id}</td>
+                                <td>
+                                <Link to={`/profile/${row.id}`}>{row.firstName}</Link>
+                                </td>
+                                <td>{row.lastName}</td>
+                                <td>{row.gender}</td>
+                                <td>{row.faculty}</td>
+                              </tr>
+                            ))}
+                            {/* <tr>
+                              <td>John</td>
+                              <td>Doe</td>
+                              <td>Male</td>
+                              <td>Engineering</td>
+                            </tr>
+                            <tr>
+                              <td>Jane</td>
+                              <td>Smith</td>
+                              <td>Female</td>
+                              <td>Science</td>
+                            </tr> */}
+                            {/* Add more rows as needed */}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className='submit-btn'>
+                        <button className="close-button" onClick={() => setShowPopup(false)}>
+                          Close
+                        </button>
+                      </div>
+                      </div>
                     </div>
                 )}
                 
