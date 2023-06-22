@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
-import '../user.css'
+import '../user.css';
 // @mui
 import {
   Card,
@@ -81,9 +81,9 @@ export default function UserPage() {
     department: '',
     role: '',
     email: '',
-    password: ''
+    password: '',
   });
-  
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -136,9 +136,9 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
-  const handleClickNewUser =()=>{
+  const handleClickNewUser = () => {
     setShowPopup(true);
-  }
+  };
 
   const handleChange = (selectedOptions) => {
     // Handle selected options
@@ -150,7 +150,7 @@ export default function UserPage() {
     const { name, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -191,7 +191,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill"/>}>
+          <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill" />}>
             New User
           </Button>
         </Stack>
@@ -283,8 +283,6 @@ export default function UserPage() {
             </TableContainer>
           </Scrollbar>
 
-         
-
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -295,74 +293,84 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
 
-
           {showPopup && (
             <div className="user-popup">
               <div className="user-form">
                 <form className="form" onSubmit={handleSubmit}>
                   <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required />
+                    <label htmlFor="name">
+                      Name:{' '}
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </label>
                   </div>
-                  
-                  <div className="role-group">
+
+                  {/* <div className="role-group">
                     <label htmlFor="email">Role:</label>
-                    <select
-                          id="role"
-                          name="role"
-                          value={formData.value}
-                          onChange={handleChange}
-                          required
-                      >
-                          <option value="">Enter value</option>
-                          <option value="john@example.com">john@example.com</option>
-                          <option value="jane@example.com">jane@example.com</option>
-                          <option value="mike@example.com">mike@example.com</option>
+                    <select id="role" name="role" value={formData.value} onChange={handleChange} required>
+                      <option value="">Enter value</option>
+                      <option value="john@example.com">john@example.com</option>
+                      <option value="jane@example.com">jane@example.com</option>
+                      <option value="mike@example.com">mike@example.com</option>
                     </select>
                   </div>
 
                   <div className="role-group">
                     <label htmlFor="email">Department:</label>
-                    <select
-                          id="role"
-                          name="role"
-                          value={formData.value}
-                          onChange={handleChange}
-                          required
-                      >
-                          <option value="">Enter value</option>
-                          <option value="john@example.com">john@example.com</option>
-                          <option value="jane@example.com">jane@example.com</option>
-                          <option value="mike@example.com">mike@example.com</option>
+                    <select id="role" name="role" value={formData.value} onChange={handleChange} required>
+                      <option value="">Enter value</option>
+                      <option value="john@example.com">john@example.com</option>
+                      <option value="jane@example.com">jane@example.com</option>
+                      <option value="mike@example.com">mike@example.com</option>
                     </select>
-                  </div>
-                  
+                  </div> */}
+
                   {/* <div className="form-group">
                     <label htmlFor="department">Department:</label>
                     <input type="text" id="department" name="department" value={formData.department} onChange={handleInputChange} required />
                   </div> */}
-                  
-                  <div className="form-group">
+
+                  {/* <div className="form-group">
                     <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} required />
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
-                  
+
                   <div className="form-group">
                     <label htmlFor="password">Password:</label>
-                    <input type="password" id="password" name="password" value={formData.password} onChange={handleInputChange} required />
-                  </div>
-                  
-                  
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div> */}
                 </form>
-                <div className='submit-btn'>
-                  <button type="submit" className='newuser-button'>Create new user</button>
+                <div className="submit-btn">
+                  <button type="submit" className="newuser-button">
+                    Create new user
+                  </button>
                   <button className="close-button" onClick={() => setShowPopup(false)}>
                     Close
                   </button>
                 </div>
               </div>
             </div>
-                )}
+          )}
         </Card>
       </Container>
 

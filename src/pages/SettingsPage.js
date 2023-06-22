@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import { Helmet } from 'react-helmet-async';
-import '../settings.css'
-import { BsArrowRepeat } from 'react-icons/bs'
+import '../settings.css';
+import { BsArrowRepeat } from 'react-icons/bs';
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // components
@@ -10,7 +10,6 @@ import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
-
 
 // ----------------------------------------------------------------------
 
@@ -21,53 +20,52 @@ import POSTS from '../_mock/blog';
 // ];
 
 const options = [
-    { value: 'FirstName', label: 'First name' },
-    { value: 'SecondName', label: 'Second name' },
-    { value: 'Department', label: 'Department' },
-    { value: 'Level', label: 'Level' },
-    { value: 'Gender', label: 'Gender' },
-    { value: 'Faculty', label: 'Faculty' },
-  ];
+  { value: 'FirstName', label: 'First name' },
+  { value: 'SecondName', label: 'Second name' },
+  { value: 'Department', label: 'Department' },
+  { value: 'Level', label: 'Level' },
+  { value: 'Gender', label: 'Gender' },
+  { value: 'Faculty', label: 'Faculty' },
+];
 
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
-    const [showPopup, setShowPopup] = useState(false);
-    const[formData, setFormData] = useState({
-        name: '',
-        category: '',
-        condition: '',
-        operator:'',
-        value:'',
-        field:'',
-        ascending:''
-    })
+  const [showPopup, setShowPopup] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    category: '',
+    condition: '',
+    operator: '',
+    value: '',
+    field: '',
+    ascending: '',
+  });
 
-    const handleClick = () => {
-        setShowPopup(true);
-      };
+  const handleClick = () => {
+    setShowPopup(true);
+  };
 
-    const handleChange = (selectedOptions) => {
+  const handleChange = (selectedOptions) => {
     // Handle selected options
     setFormData(selectedOptions);
     console.log(selectedOptions);
   };
 
-    // const handleChange = (e) => {
-    //     setFormData({ ...formData, [e.target.name]: e.target.value });
-    //   };
+  // const handleChange = (e) => {
+  //     setFormData({ ...formData, [e.target.name]: e.target.value });
+  //   };
 
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle form submission logic here
-        console.log(formData);
-      };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log(formData);
+  };
   return (
     <>
       <Helmet>
         <title> Dashboard: Settings | Minimal UI </title>
       </Helmet>
-      
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -92,8 +90,8 @@ export default function BlogPage() {
 
         {/* Category selection */}
         <div className="admin-settings-container">
-            {/* <h1>Admin Settings</h1> */}
-            <form className="admin-settings-form">
+          {/* <h1>Admin Settings</h1> */}
+          {/* <form className="admin-settings-form">
                 <label htmlFor="schoolName">School Name</label>
                 <input type="text" id="schoolName" name="schoolName" />
 
@@ -107,10 +105,8 @@ export default function BlogPage() {
                 <input type="password" id="password" name="password" />
 
                 <button type="submit">Save Changes</button>
-            </form>
+            </form> */}
         </div>
-
-        
       </Container>
     </>
   );
