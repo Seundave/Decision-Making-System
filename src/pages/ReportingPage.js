@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import { Helmet } from 'react-helmet-async';
-import axios from 'axios';
 import '../form.css';
 import { BsArrowRepeat } from 'react-icons/bs';
 // @mui
@@ -14,7 +13,7 @@ import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
-import {Charts} from '../layouts/charts/Charts'
+import { Charts } from '../layouts/charts/Charts';
 
 // ----------------------------------------------------------------------
 
