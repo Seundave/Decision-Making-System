@@ -1,7 +1,47 @@
 import React, {useEffect, useState} from "react"
 import Chart from "react-apexcharts";
 
-export default function Chart({selectedChart, selectedCategory}){
+export function Charts({selectedChart, selectedCategory}){
+
+  const getSeriesData = (category) => {
+    switch (category) {
+      case "faculty":
+        return [
+          {
+            name: "Series 1",
+            data: [30, 40, 45, 50, 49, 60, 70, 91]
+          },
+          {
+            name: "Series 2",
+            data: [20, 35, 40, 55, 45, 70, 65, 80]
+          }
+        ];
+      case "department":
+        return [
+          {
+            name: "Series 1",
+            data: [30, 40, 45, 60, 49, 90, 70, 91]
+          },
+          {
+            name: "Series 2",
+            data: [35, 55, 40, 70, 60, 50, 75, 90]
+          }
+        ];
+      case "programme":
+        return [
+          {
+            name: "Series 1",
+            data: [30, 40, 45, 55, 60, 65, 70, 75]
+          },
+          {
+            name: "Series 2",
+            data: [25, 35, 50, 60, 70, 65, 80, 90]
+          }
+        ];
+      default:
+        return [];
+    }
+  };
     
     const [state,setState] = useState({
         options: {
@@ -27,45 +67,7 @@ export default function Chart({selectedChart, selectedCategory}){
         // ]
       })
 
-      const getSeriesData = (category) => {
-        switch (category) {
-          case "faculty":
-            return [
-              {
-                name: "Series 1",
-                data: [30, 40, 45, 50, 49, 60, 70, 91]
-              },
-              {
-                name: "Series 2",
-                data: [20, 35, 40, 55, 45, 70, 65, 80]
-              }
-            ];
-          case "department":
-            return [
-              {
-                name: "Series 1",
-                data: [30, 40, 45, 60, 49, 90, 70, 91]
-              },
-              {
-                name: "Series 2",
-                data: [35, 55, 40, 70, 60, 50, 75, 90]
-              }
-            ];
-          case "programme":
-            return [
-              {
-                name: "Series 1",
-                data: [30, 40, 45, 55, 60, 65, 70, 75]
-              },
-              {
-                name: "Series 2",
-                data: [25, 35, 50, 60, 70, 65, 80, 90]
-              }
-            ];
-          default:
-            return [];
-        }
-      };
+      
 
       const handleSeriesToggle = (seriesIndex) => {
         const updatedSeries = [...state.series];

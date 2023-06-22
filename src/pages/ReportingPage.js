@@ -5,6 +5,8 @@ import Select from 'react-select';
 import { Helmet } from 'react-helmet-async';
 import '../form.css'
 import { BsArrowRepeat } from 'react-icons/bs'
+// import {Charts} from '../layouts/charts/Charts'
+// import {ChartGeneration} from '../layouts/charts/Charts'
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // components
@@ -12,6 +14,7 @@ import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
+import {Charts} from '../layouts/charts/Charts'
 
 
 // ----------------------------------------------------------------------
@@ -106,6 +109,17 @@ export default function ReportingPage() {
     //   setSelectedOptions(selectedOptions);
     // };
 
+    const [selectedChart, setSelectedChart] = useState('bar');
+    const [selectedCategory, setSelectedCategory] = useState('faculty');
+
+    const handleChartSelect = (event) => {
+        setSelectedChart(event.target.value);
+    };
+
+    const handleSelectedCategory = (event) => {
+        setSelectedCategory(event.target.value);
+    };
+
     const handleChange = (selectedOptions) => {
     // Handle selected options
       setFormData(selectedOptions);
@@ -121,7 +135,7 @@ export default function ReportingPage() {
     };
 
     const handleGenerateChart = () => {
-      setShowChartPopup
+      setShowChartPopup(true)
       // setFilteredData(filteredData)
       // setShowPopup
       // Perform any desired action with the filteredData
@@ -164,7 +178,7 @@ export default function ReportingPage() {
         {/* Category selection */}
        
 
-        <div className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
+        <div className={`form-container ${showPopup || showChartPopup ? 'opacity-reduced' : ''}`}>
             {/* <h2>Contact Form</h2> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
               <Typography variant="h4" gutterBottom>
@@ -383,6 +397,68 @@ export default function ReportingPage() {
                       </div>
                     </div>
                     </div>
+                )}
+
+                   {showChartPopup && (
+                    <div className="popup">
+                      <div className="report-container">
+                        <select
+                          id="field"
+                          name="field"
+                          value={selectedCategory}
+                          onChange={handleSelectedCategory}
+                          required
+                      >
+                          {/* <option value="">Select Chart</option> */}
+                          <option value="bar">Faculty</option>
+                          <option value="area">Department</option>
+                          <option value="line">Programme</option>
+                          {/* <option value="radar">Radar Chart</option>
+                          <option value="scatter">Scatter Chart</option>
+                          <option value="heatmap">Heatmap Chart</option> */}
+                      </select>
+
+
+                      <select
+                          id="field"
+                          name="field"
+                          value={selectedChart}
+                          onChange={handleChartSelect}
+                          required
+                      >
+                          {/* <option value="">Select Chart</option> */}
+                          <option value="bar">Bar Chart</option>
+                          <option value="area">Area Chart</option>
+                          <option value="line">Line Chart</option>
+                          <option value="radar">Radar Chart</option>
+                          <option value="scatter">Scatter Chart</option>
+                          <option value="heatmap">Heatmap Chart</option>
+                      </select>
+
+
+                      <div>
+                        <Charts selectedChart={selectedChart} selectedCategory={selectedCategory}/>   
+                      </div>
+
+                        <div className='submit-btn'>
+                          <button className="close-button" onClick={() => setShowChartPopup(false)}>
+                              Close
+                            </button>
+                        </div>
+                    </div>
+                      
+
+                        {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                          <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                          </button>
+                        </Link> */}
+                        
+                        
+                    </div>
+                    
+                    
                 )}
                 
                 
