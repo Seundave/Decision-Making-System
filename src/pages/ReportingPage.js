@@ -402,48 +402,52 @@ export default function ReportingPage() {
                    {showChartPopup && (
                     <div className="popup">
                       <div className="report-container">
-                        <select
-                          id="field"
-                          name="field"
-                          value={selectedCategory}
-                          onChange={handleSelectedCategory}
-                          required
-                      >
-                          {/* <option value="">Select Chart</option> */}
-                          <option value="bar">Faculty</option>
-                          <option value="area">Department</option>
-                          <option value="line">Programme</option>
-                          {/* <option value="radar">Radar Chart</option>
-                          <option value="scatter">Scatter Chart</option>
-                          <option value="heatmap">Heatmap Chart</option> */}
-                      </select>
+                        <div className='chart-content'>
+                          <div className='chart-selection'>
+                            <select
+                              id="field"
+                              name="field"
+                              value={selectedCategory}
+                              onChange={handleSelectedCategory}
+                              required
+                            >
+                              {/* <option value="">Select Chart</option> */}
+                              <option value="bar">Faculty</option>
+                              <option value="area">Department</option>
+                              <option value="line">Programme</option>
+                              {/* <option value="radar">Radar Chart</option>
+                              <option value="scatter">Scatter Chart</option>
+                              <option value="heatmap">Heatmap Chart</option> */}
+                            </select>
 
 
-                      <select
-                          id="field"
-                          name="field"
-                          value={selectedChart}
-                          onChange={handleChartSelect}
-                          required
-                      >
-                          {/* <option value="">Select Chart</option> */}
-                          <option value="bar">Bar Chart</option>
-                          <option value="area">Area Chart</option>
-                          <option value="line">Line Chart</option>
-                          <option value="radar">Radar Chart</option>
-                          <option value="scatter">Scatter Chart</option>
-                          <option value="heatmap">Heatmap Chart</option>
-                      </select>
+                            <select
+                                id="field"
+                                name="field"
+                                value={selectedChart}
+                                onChange={handleChartSelect}
+                                required
+                            >
+                                {/* <option value="">Select Chart</option> */}
+                                <option value="bar">Bar Chart</option>
+                                <option value="area">Area Chart</option>
+                                <option value="line">Line Chart</option>
+                                <option value="radar">Radar Chart</option>
+                                <option value="scatter">Scatter Chart</option>
+                                <option value="heatmap">Heatmap Chart</option>
+                            </select>
 
+                          </div>
 
-                      <div>
-                        <Charts selectedChart={selectedChart} selectedCategory={selectedCategory}/>   
-                      </div>
+                          <div>
+                            <Charts selectedChart={selectedChart} selectedCategory={selectedCategory}/>   
+                          </div>
 
-                        <div className='submit-btn'>
-                          <button className="close-button" onClick={() => setShowChartPopup(false)}>
-                              Close
-                            </button>
+                          <div className='submit-btn'>
+                            <button className="close-button" onClick={() => setShowChartPopup(false)}>
+                                Close
+                              </button>
+                          </div>
                         </div>
                     </div>
                       

@@ -212,6 +212,25 @@ tr:nth-child(even) {
   background-color: #dedada;
 }
 
+.chart-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding:50px 0px;
+}
+
+.chart-selection{
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.report-container > .chart-content > .chart-selection > select{
+  flex:1 1;
+}
+
 /* input {
   width: 100%;
   padding: 6px 10px;
