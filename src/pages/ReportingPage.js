@@ -24,12 +24,13 @@ import { Charts } from '../layouts/charts/Charts';
 // ];
 
 const options = [
-  { value: 'FirstName', label: 'First name' },
-  { value: 'SecondName', label: 'Second name' },
-  { value: 'Department', label: 'Department' },
-  { value: 'Level', label: 'Level' },
-  { value: 'Gender', label: 'Gender' },
-  { value: 'Faculty', label: 'Faculty' },
+  { value: 'studentFirstName', label: 'First name' },
+  { value: 'studentLastSurname', label: 'Last name' },
+  { value: 'studentMatricNum', label: 'Matric Number' },
+  { value: 'studyLevel', label: 'Level' },
+  { value: 'gender', label: 'Gender' },
+  { value: 'faculty', label: 'Faculty' },
+  { value: 'email', label: 'email' },
 ];
 
 // const Table = () => {
@@ -65,8 +66,14 @@ export default function BlogPage() {
       console.log(e);
     }
   };
+  const handleGenerateChart = () => {
+    setShowChartPopup(true);
+  };
   const [showPopup, setShowPopup] = useState(false);
+  const [showChartPopup, setShowChartPopup] = useState(false);
+  const [selectedChart, setSelectedChart] = useState(false);
   const [selectformData, setSelectFormData] = useState();
+  const [selectedCategory, setSelectedCategory] = useState();
   const [conditionData, setConditionData] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -79,7 +86,8 @@ export default function BlogPage() {
   });
 
   const handleClick = () => {
-    // setShowPopup(true);
+    // setShowChartPopup(true);
+    setShowPopup(true);
     let queryData;
 
     console.log({ selectformData });
@@ -104,6 +112,13 @@ export default function BlogPage() {
     }
     console.log({ queryData });
     retrieveData(queryData);
+  };
+
+  const handleSelectedCategory = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+  const handleChartSelect = (e) => {
+    setSelectedChart(e.target.value);
   };
 
   const handleSelectChange = (selectedOptions) => {
@@ -243,7 +258,6 @@ export default function BlogPage() {
             </div>
             <div className="line" />
             <div className="submit-btn">
-              {/* <button type="submit" onClick={handleClick}><BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>Generate Report</button> */}
               <button type="submit" onClick={handleClick}>
                 <BsArrowRepeat size={20} style={{ marginRight: '8px' }} />
                 <span className="button-text">Generate Report</span>
@@ -293,11 +307,84 @@ export default function BlogPage() {
                     </table>
                   </div>
                   <div className="submit-btn">
+                    {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                            <button type="submit" onClick={handleClick} >
+                              <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                              <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                            </button>
+                        </Link> */}
+
+                    <button type="submit" className="close-button" style={{ marginRight: '8px' }}>
+                      <BsArrowRepeat size={20} style={{ marginRight: '8px' }} />
+                      <span className="button-text" onClick={handleGenerateChart}>
+                        Generate Charts
+                      </span>
+                    </button>
+
+                    {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                          <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                          </button>
+                        </Link> */}
                     <button className="close-button" onClick={() => setShowPopup(false)}>
                       Close
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {showChartPopup && (
+              <div className="popup">
+                <div className="report-container">
+                  <div className="chart-content">
+                    <div className="chart-selection">
+                      <select
+                        id="field"
+                        name="field"
+                        value={selectedCategory}
+                        onChange={handleSelectedCategory}
+                        required
+                      >
+                        {/* <option value="">Select Chart</option> */}
+                        <option value="bar">Faculty</option>
+                        <option value="area">Department</option>
+                        <option value="line">Programme</option>
+                        {/* <option value="radar">Radar Chart</option>
+                              <option value="scatter">Scatter Chart</option>
+                              <option value="heatmap">Heatmap Chart</option> */}
+                      </select>
+
+                      <select id="field" name="field" value={selectedChart} onChange={handleChartSelect} required>
+                        {/* <option value="">Select Chart</option> */}
+                        <option value="bar">Bar Chart</option>
+                        <option value="area">Area Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="radar">Radar Chart</option>
+                        <option value="scatter">Scatter Chart</option>
+                        <option value="heatmap">Heatmap Chart</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Charts selectedChart={selectedChart} selectedCategory={selectedCategory} />
+                    </div>
+
+                    <div className="submit-btn">
+                      <button className="close-button" onClick={() => setShowChartPopup(false)}>
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                          <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                          </button>
+                        </Link> */}
               </div>
             )}
           </div>
