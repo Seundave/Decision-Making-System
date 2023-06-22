@@ -25,6 +25,8 @@ import {Charts} from '../layouts/charts/Charts'
 //   { value: 'oldest', label: 'Oldest' },
 // ];
 
+
+
 const options = [
     { value: 'FirstName', label: 'First name' },
     { value: 'SecondName', label: 'Second name' },
@@ -53,6 +55,8 @@ const options = [
 export default function ReportingPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [showChartPopup, setShowChartPopup] = useState(false);
+    const [selectedChart, setSelectedChart] = useState('bar');
+    const [selectedCategory, setSelectedCategory] = useState('faculty');
     const [filteredData, setFilteredData] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const[formData, setFormData] = useState({
@@ -64,6 +68,22 @@ export default function ReportingPage() {
         field:'',
         ascending:''
     })
+    
+
+    const handleChartSelect = (event) => {
+        setSelectedChart(event.target.value);
+        console.log(setSelectedChart)
+    };
+
+    const handleSelectedCategory = (event) => {
+        setSelectedCategory(event.target.value);
+    };
+
+    const handleChange = (selectedOptions) => {
+    // Handle selected options
+      setFormData(selectedOptions);
+      console.log(selectedOptions);
+    };
 
     // useEffect(() => {
     //   const fetchData = async () => {
@@ -101,6 +121,8 @@ export default function ReportingPage() {
     const handleClick = () => {
         setShowPopup(true);
     };
+
+    
     
 
     // const handleSelectChange = (selectedOptions, selectedValues) => {
@@ -109,22 +131,7 @@ export default function ReportingPage() {
     //   setSelectedOptions(selectedOptions);
     // };
 
-    const [selectedChart, setSelectedChart] = useState('bar');
-    const [selectedCategory, setSelectedCategory] = useState('faculty');
-
-    const handleChartSelect = (event) => {
-        setSelectedChart(event.target.value);
-    };
-
-    const handleSelectedCategory = (event) => {
-        setSelectedCategory(event.target.value);
-    };
-
-    const handleChange = (selectedOptions) => {
-    // Handle selected options
-      setFormData(selectedOptions);
-      console.log(selectedOptions);
-    };
+   
 
     const handleGenerateReport = () => {
       setFilteredData(filteredData)
@@ -407,6 +414,7 @@ export default function ReportingPage() {
                             <select
                               id="field"
                               name="field"
+                              className='faculty-select'
                               value={selectedCategory}
                               onChange={handleSelectedCategory}
                               required
@@ -424,6 +432,7 @@ export default function ReportingPage() {
                             <select
                                 id="field"
                                 name="field"
+                                className='chart-select'
                                 value={selectedChart}
                                 onChange={handleChartSelect}
                                 required
@@ -440,14 +449,15 @@ export default function ReportingPage() {
                           </div>
 
                           <div>
-                            <Charts selectedChart={selectedChart} selectedCategory={selectedCategory}/>   
+                            <Charts selectedChart={selectedChart} selectedCategory={selectedCategory} />   
                           </div>
 
-                          <div className='submit-btn'>
+                          
+                        </div>
+                        <div className='chart-submit-btn'>
                             <button className="close-button" onClick={() => setShowChartPopup(false)}>
                                 Close
                               </button>
-                          </div>
                         </div>
                     </div>
                       

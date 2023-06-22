@@ -107,10 +107,10 @@ export function Charts({selectedChart, selectedCategory}){
                 />
             </div>
 
-            <div>
+            {/* <div>
                 <button onClick={() => handleSeriesToggle(0)}>Toggle Series 1</button>
                 <button onClick={() => handleSeriesToggle(1)}>Toggle Series 2</button>
-            </div>
+            </div> */}
 
             {/* <div>
                 <Chart
