@@ -78,7 +78,7 @@ export default function UserPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    department: '',
+    company: '',
     role: '',
     email: '',
     password: ''
@@ -322,7 +322,7 @@ export default function UserPage() {
                   </div>
 
                   <div className="role-group">
-                    <label htmlFor="email">Department:</label>
+                    <label htmlFor="email">Company:</label>
                     <select
                           id="role"
                           name="role"

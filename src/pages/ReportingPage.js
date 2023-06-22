@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import { Helmet } from 'react-helmet-async';
@@ -46,8 +47,11 @@ const options = [
   ];
 // ----------------------------------------------------------------------
 
-export default function BlogPage() {
+export default function ReportingPage() {
     const [showPopup, setShowPopup] = useState(false);
+    const [showChartPopup, setShowChartPopup] = useState(false);
+    const [filteredData, setFilteredData] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState([]);
     const[formData, setFormData] = useState({
         name: '',
         category: '',
@@ -58,15 +62,74 @@ export default function BlogPage() {
         ascending:''
     })
 
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+    //       const response = await fetch('https://api.example.com/data'); // Replace with your API endpoint
+    //       if (response.ok) {
+    //         const jsonData = await response.json();
+    //         setFormData(jsonData);
+    //       } else {
+    //         throw new Error('Request failed');
+    //       }
+    //     } catch (error) {
+    //       console.error(error);
+    //     }
+    //   };
+  
+    //   fetchData();
+    // }, []);
+    
+    useEffect(() => {
+      // Filter data based on selected options
+      const filterData = () => {
+        let filteredResults = formData;
+  
+        selectedOptions.forEach((option) => {
+          filteredResults = filteredResults.filter((item) => item[option]);
+        });
+  
+        setFilteredData(filteredResults);
+      };
+  
+      filterData();
+    }, [formData, selectedOptions]);
+
     const handleClick = () => {
         setShowPopup(true);
-      };
+    };
+    
+
+    // const handleSelectChange = (selectedOptions, selectedValues) => {
+    //   setFormData(selectedOptions);
+    //   const selectedOptions = selectedValues.map((option) => option.value);
+    //   setSelectedOptions(selectedOptions);
+    // };
 
     const handleChange = (selectedOptions) => {
     // Handle selected options
-    setFormData(selectedOptions);
-    console.log(selectedOptions);
-  };
+      setFormData(selectedOptions);
+      console.log(selectedOptions);
+    };
+
+    const handleGenerateReport = () => {
+      setFilteredData(filteredData)
+      setShowPopup
+      // Perform any desired action with the filteredData
+      console.log(filteredData);
+      // You can generate the report or perform any other operations here
+    };
+
+    const handleGenerateChart = () => {
+      setShowChartPopup
+      // setFilteredData(filteredData)
+      // setShowPopup
+      // Perform any desired action with the filteredData
+      // console.log(filteredData);
+      // You can generate the report or perform any other operations here
+    };
+
+  
 
     // const handleChange = (e) => {
     //     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -204,9 +267,11 @@ export default function BlogPage() {
                     required
                 >
                     <option value="">Select Fields</option>
-                    <option value="Hello">Hello</option>
-                    <option value="Hi">Hi</option>
-                    <option value="Greetings">Greetings</option>
+                    <option value="firstname">First name</option>
+                    <option value="lastname">Last name</option>
+                    <option value="gender">Gender</option>
+                    <option value="department">Faculty</option>
+                    <option value="department">Department</option>
                 </select>
 
                 <select
@@ -225,10 +290,13 @@ export default function BlogPage() {
                 <div className='line'/>
                 <div className="submit-btn" >
                     {/* <button type="submit" onClick={handleClick}><BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>Generate Report</button> */}
-                    <button type="submit" onClick={handleClick}>
+                    <button type="submit" onClick={handleClick} style={{ marginRight: '8px' }}>
                       <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
-                      <span className="button-text">Generate Report</span>
+                      <span className="button-text" onClick={handleGenerateReport}>Generate Report</span>
                     </button>
+
+                    
+                    
                 </div>
                 {showPopup && (
                     <div className="popup">
@@ -244,6 +312,12 @@ export default function BlogPage() {
                               <th>Gender</th>
                               <th>Faculty</th>
                             </tr>
+
+                            {/* <tr>
+                              {selectedOptions.map((option) => (
+                                <th key={option}>{option}</th>
+                              ))}
+                            </tr> */}
                           </thead>
                           <tbody>
 
@@ -258,6 +332,15 @@ export default function BlogPage() {
                                 <td>{row.faculty}</td>
                               </tr>
                             ))}
+
+                            {/* {filteredData.map((item) => (
+                                <tr key={item.id}>
+                                  {selectedOptions.map((option) => (
+                                    <td key={option}>Dummy Text</td>
+                                  ))}
+                                </tr>
+                              ))} */}
+
                             {/* <tr>
                               <td>John</td>
                               <td>Doe</td>
@@ -275,13 +358,33 @@ export default function BlogPage() {
                         </table>
                       </div>
                       <div className='submit-btn'>
+                        {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                            <button type="submit" onClick={handleClick} >
+                              <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                              <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                            </button>
+                        </Link> */}
+
+                        <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                              <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                              <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                        </button>
+
+                        {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                          <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                          </button>
+                        </Link> */}
                         <button className="close-button" onClick={() => setShowPopup(false)}>
                           Close
                         </button>
-                      </div>
+                        
                       </div>
                     </div>
+                    </div>
                 )}
+                
                 
             </form>
             </div>
