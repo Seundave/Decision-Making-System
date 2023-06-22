@@ -8,7 +8,7 @@ import { BsArrowRepeat } from 'react-icons/bs';
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // components
-import { departments, faculties, lookupTable, gender } from '../utils/utilData';
+import { departments, faculties, lookupTable, gender, sessions } from '../utils/utilData';
 import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
@@ -62,6 +62,7 @@ export default function BlogPage() {
         },
       });
       console.log({ response });
+      return response.data.results;
     } catch (e) {
       console.log(e);
     }
@@ -70,11 +71,14 @@ export default function BlogPage() {
     setShowChartPopup(true);
   };
   const [showPopup, setShowPopup] = useState(false);
+  const [resultData, setResultData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [showChartPopup, setShowChartPopup] = useState(false);
   const [selectedChart, setSelectedChart] = useState(false);
   const [selectformData, setSelectFormData] = useState();
   const [selectedCategory, setSelectedCategory] = useState();
   const [conditionData, setConditionData] = useState([]);
+  const [showInputText, setShowInputText] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -83,35 +87,57 @@ export default function BlogPage() {
     value: '',
     field: '',
     ascending: '',
+    text: '',
   });
 
-  const handleClick = () => {
+  const handleClick = async () => {
     // setShowChartPopup(true);
-    setShowPopup(true);
-    let queryData;
-
-    console.log({ selectformData });
-
-    if (formData.condition !== '') {
-      const table = lookupTable[formData.condition].name;
-      const columns = lookupTable[formData.condition].common;
-      const seperateTable = lookupTable[formData.condition].seperateTable;
-      console.log({ table, columns });
-      const requestObject = selectformData.map((data) => `s.${data.value}`);
-      if (seperateTable) {
-        queryData = `SELECT ${requestObject.join(', ')} FROM student s JOIN ${table} d ON s.${formData.condition} = d.${
-          formData.condition === 'faculty' ? 'facultyID' : formData.condition
-        } WHERE d.${columns} = '${formData.value}'`;
-      } else {
-        const requestObject = selectformData.map((data) => `${data.value}`);
-        queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${columns} = '${formData.value}'`;
+    try {
+      setLoading(true);
+      setShowPopup(true);
+      let queryData;
+      const selectedData = selectformData;
+      if (!selectedData.find((data) => data.value === formData.field) && formData.field !== '') {
+        selectedData.push({ value: formData.field });
       }
-    } else {
-      const requestObject = selectformData.map((data) => data.value);
-      queryData = `SELECT  ${requestObject.join(', ')} FROM student`;
+      console.log({ selectedData });
+
+      if (!showInputText) {
+        if (formData.condition !== '') {
+          const table = lookupTable[formData.condition].name;
+          const columns = lookupTable[formData.condition].common;
+          const seperateTable = lookupTable[formData.condition].seperateTable;
+          console.log({ table, columns });
+          const requestObject = selectedData.map((data) => `s.${data.value}`);
+          if (seperateTable) {
+            queryData = `SELECT ${requestObject.join(', ')} FROM student s JOIN ${table} d ON s.${
+              formData.condition
+            } = d.${formData.condition === 'faculty' ? 'facultyID' : formData.condition} WHERE d.${columns} = '${
+              formData.value
+            }'`;
+          } else {
+            const requestObject = selectedData.map((data) => `${data.value}`);
+            queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${columns} = '${formData.value}'`;
+          }
+        } else {
+          const requestObject = selectedData.map((data) => data.value);
+          queryData = `SELECT  ${requestObject.join(', ')} FROM student`;
+        }
+      } else {
+        const requestObject = selectedData.map((data) => data.value);
+        queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${formData.condition} = '${formData.text}'`;
+      }
+
+      console.log({ queryData });
+      let data = await retrieveData(queryData);
+      console.log({ data }, Object.keys(data));
+      setResultData(data);
+      setLoading(false);
+    } catch (e) {
+      console.log({ e });
+    } finally {
+      setLoading(false);
     }
-    console.log({ queryData });
-    retrieveData(queryData);
   };
 
   const handleSelectedCategory = (e) => {
@@ -132,12 +158,24 @@ export default function BlogPage() {
       departmentID: departments,
       faculty: faculties,
       gender,
+      session: sessions,
     };
     console.log(e.target.value, e.target.name);
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (e.target.name === 'condition') {
-      console.log(dataValue[e.target.value]);
-      setConditionData(dataValue[e.target.value]);
+      let value = e.target.value;
+      if (
+        value === 'yearOFEntryIntoUI' ||
+        value === 'studentLastSurname' ||
+        value === 'studentFirstName' ||
+        value === 'studentMiddleName'
+      ) {
+        setShowInputText(true);
+      } else {
+        setShowInputText(false);
+        console.log(dataValue[e.target.value]);
+        setConditionData(dataValue[e.target.value]);
+      }
     }
   };
 
@@ -215,8 +253,11 @@ export default function BlogPage() {
               <label htmlFor="email">Field Conditions</label>
               <select id="condition" name="condition" value={formData.condition} onChange={handleChange} required>
                 <option value="">Select conditions</option>
-                <option value="john@example.com">First name</option>
-                <option value="jane@example.com">Second name</option>
+                <option value="studentFirstName">First name</option>
+                <option value="studentMiddleName">Middle name</option>
+                <option value="studentLastSurname">Last name</option>
+                <option value="yearOFEntryIntoUI">Year of Entry</option>
+                <option value="session">session</option>
                 <option value="faculty">Faculty</option>
                 <option value="departmentID">Department</option>
                 <option value="gender">Gender</option>
@@ -230,25 +271,38 @@ export default function BlogPage() {
                 <option value="mike@example.com">Not less than</option>
                 <option value="mike@example.com">Not greater than</option>
               </select>
-              <select id="value" name="value" value={formData.value} onChange={handleChange} required>
-                <option value="">Enter value</option>
-                {conditionData.map((item, index) => {
-                  return (
-                    <option value={item.value} key={index}>
-                      {item.name}
-                    </option>
-                  );
-                })}
-              </select>
+              {!showInputText ? (
+                <select id="value" name="value" value={formData.value} onChange={handleChange} required>
+                  <option value="">Enter value</option>
+                  {conditionData.map((item, index) => {
+                    return (
+                      <option value={item.value} key={index}>
+                        {item.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  id="text"
+                  style={{ width: '50%' }}
+                  name="text"
+                  value={formData.text}
+                  onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
+                  required
+                />
+              )}
             </div>
             <div className="line" />
             <div className="form-group">
               <label htmlFor="message">Sort Fields</label>
               <select id="field" name="field" value={formData.field} onChange={handleChange} required>
                 <option value="">Select Fields</option>
-                <option value="Hello">Hello</option>
-                <option value="Hi">Hi</option>
-                <option value="Greetings">Greetings</option>
+                <option value="studentMatricNum">Matric Number</option>
+                <option value="currentSession">session</option>
+                <option value="studyLevel">Study Level</option>
+                <option value="departmentID">department</option>
               </select>
 
               <select id="ascending" name="ascending" value={formData.message} onChange={handleChange} required>
@@ -265,73 +319,69 @@ export default function BlogPage() {
             </div>
             {showPopup && (
               <div className="popup">
-                <div className="report-container">
-                  <h2>Report</h2>
-                  <div className="table-container">
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>Id</th>
-                          <th>First Name</th>
-                          <th>Last Name</th>
-                          <th>Gender</th>
-                          <th>Faculty</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {tableData.map((row) => (
-                          <tr key={row.id}>
-                            <td>{row.id}</td>
-                            <td>
-                              <Link to={`/profile/${row.id}`}>{row.firstName}</Link>
-                            </td>
-                            <td>{row.lastName}</td>
-                            <td>{row.gender}</td>
-                            <td>{row.faculty}</td>
+                {loading ? (
+                  <div>spinner</div>
+                ) : resultData.length > 0 ? (
+                  <div className="report-container">
+                    <h2>Report</h2>
+                    <div className="table-container">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            {Object.keys(resultData[0]).map((item, index) => {
+                              return <th key={index}>{item}</th>;
+                            })}
                           </tr>
-                        ))}
-                        {/* <tr>
-                              <td>John</td>
-                              <td>Doe</td>
-                              <td>Male</td>
-                              <td>Engineering</td>
-                            </tr>
-                            <tr>
-                              <td>Jane</td>
-                              <td>Smith</td>
-                              <td>Female</td>
-                              <td>Science</td>
-                            </tr> */}
-                        {/* Add more rows as needed */}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="submit-btn">
-                    {/* <Link to="/chart" style={{ textDecoration: "none" }}>
-                            <button type="submit" onClick={handleClick} >
-                              <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
-                              <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
-                            </button>
-                        </Link> */}
+                        </thead>
+                        <tbody>
+                          {resultData.map((row, index) => {
+                            //  (
+                            //   <tr key={row.id}>
+                            //     <td>{row.id}</td>
+                            //     <td>
+                            //       <Link to={`/profile/${row.id}`}>{row.firstName}</Link>
+                            //     </td>
+                            //     <td>{row.lastName}</td>
+                            //     <td>{row.gender}</td>
+                            //     <td>{row.faculty}</td>
+                            //   </tr>
+                            // )
+                            return (
+                              <tr key={index}>
+                                {
+                                  //  const keys =
+                                  Object.keys(row).map((key) => {
+                                    return <td>{row[key]}</td>;
+                                  })
+                                }
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="submit-btn">
+                      <button type="submit" className="close-button" style={{ marginRight: '8px' }}>
+                        <BsArrowRepeat size={20} style={{ marginRight: '8px' }} />
+                        <span className="button-text" onClick={handleGenerateChart}>
+                          Generate Charts
+                        </span>
+                      </button>
 
-                    <button type="submit" className="close-button" style={{ marginRight: '8px' }}>
-                      <BsArrowRepeat size={20} style={{ marginRight: '8px' }} />
-                      <span className="button-text" onClick={handleGenerateChart}>
-                        Generate Charts
-                      </span>
-                    </button>
-
-                    {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                      {/* <Link to="/chart" style={{ textDecoration: "none" }}>
                           <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
                                 <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
                                 <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
                           </button>
                         </Link> */}
-                    <button className="close-button" onClick={() => setShowPopup(false)}>
-                      Close
-                    </button>
+                      <button className="close-button" onClick={() => setShowPopup(false)}>
+                        Close
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div>no data found</div>
+                )}
               </div>
             )}
 
