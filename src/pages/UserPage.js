@@ -78,7 +78,7 @@ export default function UserPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    department: '',
+    company: '',
     role: '',
     email: '',
     password: '',

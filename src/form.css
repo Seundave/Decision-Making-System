@@ -152,6 +152,36 @@
     font-family: Public Sans,sans-serif;
   }
 
+  /* .submit-btn > Link{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width:250px;
+    background-color: #4c53e2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Public Sans,sans-serif;
+  } */
+
+  .submit-btn > Link > button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width:250px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Public Sans,sans-serif;
+  }
+
   .close-button {
     margin-top: 10px;
     padding: 8px 16px;
