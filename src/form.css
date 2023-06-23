@@ -217,7 +217,7 @@ tr:nth-child(even) {
   color: rgb(55, 53, 53);
 }
 
-.student-profile {
+/* .student-profile {
   display: flex;
   flex-wrap: wrap;
   margin: 20px;
@@ -258,9 +258,27 @@ input[type="text"] {
   border: 1px solid #ccc;
   border-radius: 3px;
   font-size: 14px;
+} */
+
+/* Responsive CSS */
+/* @media (max-width: 600px) {
+  .profile-row {
+    flex-wrap: wrap;
+  }
+
+  .profile-row input[type="text"] {
+    flex: 1;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
 }
 
-
+@media (max-width: 400px) {
+  .profile-row input[type="text"] {
+    flex: 100%;
+    margin-right: 0;
+  }
+} */
 
 
 .chart-content{
@@ -361,16 +379,6 @@ input[type="text"] {
       padding: 10px;
     }
 
-    .profile-row {
-      flex-wrap: wrap;
-    }
-  
-    .profile-row input[type="text"] {
-      flex: 1;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-
     /* .form-container > .form-group.middle > select {
       margin:10px 0;
     } */
@@ -427,12 +435,5 @@ input[type="text"] {
   input {
     padding: 2px 4px;
   }
-
-  .profile-row input[type="text"] {
-    flex: 100%;
-    margin-right: 0;
-  }
 }
-
-
   
