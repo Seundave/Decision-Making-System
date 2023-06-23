@@ -44,6 +44,8 @@ export function Charts({selectedChart, selectedCategory}){
   };
     
     const [state,setState] = useState({
+        loaded: true,
+        pievalues: [23, 11],
         options: {
           colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
           chart: {
@@ -54,6 +56,7 @@ export function Charts({selectedChart, selectedCategory}){
           }
         },
         series: getSeriesData(selectedCategory)
+        // series: selectedChart === "pie" ? state.pievalues : getSeriesData(selectedCategory),
         // series: [
         //   {
         //     name: "series-1",
@@ -67,17 +70,21 @@ export function Charts({selectedChart, selectedCategory}){
         // ]
       })
 
-      
+      const changeChart = () =>{
+        setState(selectedChart)
+      }
 
-      const handleSeriesToggle = (seriesIndex) => {
-        const updatedSeries = [...state.series];
-        updatedSeries[seriesIndex].data = updatedSeries[seriesIndex].data.map((value) => {
-          return value === null ? 0 : null;
-        });
-        setState({ ...state, series: updatedSeries });
-      };
+      // const handleSeriesToggle = (seriesIndex) => {
+      //   const updatedSeries = [...state.series];
+      //   updatedSeries[seriesIndex].data = updatedSeries[seriesIndex].data.map((value) => {
+      //     return value === null ? 0 : null;
+      //   });
+      //   setState({ ...state, series: updatedSeries });
+      // };
+      // const [showChart, setShowChart] =
 
       const getChartType = () => {
+        // alert(1)
         switch (selectedChart) {
           case "bar":
             return "bar";
@@ -91,6 +98,8 @@ export function Charts({selectedChart, selectedCategory}){
             return "scatter";
           case "heatmap":
             return "heatmap";
+          case "pie":
+            return "pie";
           default:
             return "bar";
         }
@@ -101,9 +110,11 @@ export function Charts({selectedChart, selectedCategory}){
             <div>
                 <Chart
                     options={state.options}
+                    // {("bar" || "area"|| "line"|| "radar"||"scatter"|| "heatmap" ? series={...state.series} : series={state.pievalues})}
                     series={state.series}
                     type={getChartType()}
                     width="450"
+                    onChange={changeChart}
                 />
             </div>
 

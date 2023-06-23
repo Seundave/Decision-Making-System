@@ -322,7 +322,7 @@ export default function UserPage() {
                   </div>
 
                   <div className="role-group">
-                    <label htmlFor="email">Company:</label>
+                    <label htmlFor="email">Department:</label>
                     <select
                           id="role"
                           name="role"

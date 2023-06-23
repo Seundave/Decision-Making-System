@@ -10,10 +10,10 @@ import { BsArrowRepeat } from 'react-icons/bs'
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // components
-import Iconify from '../components/iconify';
-import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
+// import Iconify from '../components/iconify';
+// import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
-import POSTS from '../_mock/blog';
+// import POSTS from '../_mock/blog';
 import {Charts} from '../layouts/charts/Charts'
 
 
@@ -81,7 +81,7 @@ export default function ReportingPage() {
 
     const handleChange = (selectedOptions) => {
     // Handle selected options
-      setFormData(selectedOptions);
+      setFormData({...formData, selectedOptions});
       console.log(selectedOptions);
     };
 
@@ -135,7 +135,7 @@ export default function ReportingPage() {
 
     const handleGenerateReport = () => {
       setFilteredData(filteredData)
-      setShowPopup
+      setShowPopup(true)
       // Perform any desired action with the filteredData
       console.log(filteredData);
       // You can generate the report or perform any other operations here
@@ -435,10 +435,12 @@ export default function ReportingPage() {
                                 className='chart-select'
                                 value={selectedChart}
                                 onChange={handleChartSelect}
+                                setSelectedChart={setSelectedChart}
                                 required
                             >
                                 {/* <option value="">Select Chart</option> */}
                                 <option value="bar">Bar Chart</option>
+                                <option value="pie">Pie Chart</option>
                                 <option value="area">Area Chart</option>
                                 <option value="line">Line Chart</option>
                                 <option value="radar">Radar Chart</option>
