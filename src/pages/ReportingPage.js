@@ -7,13 +7,23 @@ import '../form.css';
 import { BsArrowRepeat } from 'react-icons/bs';
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import Checkbox from '@material-ui/core/Checkbox';
+import InputLabel from '@material-ui/core/InputLabel';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import { Select as Selected } from '@material-ui/core';
+
 // components
 import { departments, faculties, lookupTable, gender, sessions } from '../utils/utilData';
 import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
+import { MenuProps, useStyles, options as optionsData } from './utils';
 // mock
 import POSTS from '../_mock/blog';
-import { Charts } from '../layouts/charts/Charts';
+// import { Charts } from '../layouts/charts/Charts';
+import ChartComponent from './ChartComponent';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +60,7 @@ const tableData = [
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+  const classes = useStyles();
   const retrieveData = async (queryData) => {
     console.log({ queryData });
     try {
@@ -70,6 +81,7 @@ export default function BlogPage() {
   const handleGenerateChart = () => {
     setShowChartPopup(true);
   };
+
   const [showPopup, setShowPopup] = useState(false);
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -89,6 +101,18 @@ export default function BlogPage() {
     ascending: '',
     text: '',
   });
+
+  const [selected, setSelected] = useState([]);
+  const isAllSelected = conditionData.length > 0 && selected.length === conditionData.length;
+
+  const handleMultipleChange = (event) => {
+    const value = event.target.value;
+    if (value[value.length - 1] === 'all') {
+      setSelected(selected.length === conditionData.length ? [] : conditionData.map((c) => c.value));
+      return;
+    }
+    setSelected(value);
+  };
 
   const handleClick = async () => {
     // setShowChartPopup(true);
@@ -112,9 +136,10 @@ export default function BlogPage() {
           if (seperateTable) {
             queryData = `SELECT ${requestObject.join(', ')} FROM student s JOIN ${table} d ON s.${
               formData.condition
-            } = d.${formData.condition === 'faculty' ? 'facultyID' : formData.condition} WHERE d.${columns} = '${
-              formData.value
-            }'`;
+            } = d.${
+              formData.condition === 'faculty' ? 'facultyID' : formData.condition
+            } WHERE d.${columns} IN (${selected.map((d) => `'${d}'`).join(', ')})`;
+            console.log({ queryData });
           } else {
             const requestObject = selectedData.map((data) => `${data.value}`);
             queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${columns} = '${formData.value}'`;
@@ -128,7 +153,6 @@ export default function BlogPage() {
         queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${formData.condition} = '${formData.text}'`;
       }
 
-      console.log({ queryData });
       let data = await retrieveData(queryData);
       console.log({ data }, Object.keys(data));
       setResultData(data);
@@ -188,6 +212,7 @@ export default function BlogPage() {
     // Handle form submission logic here
     console.log(formData);
   };
+  console.log({ optionsData });
   return (
     <>
       <Helmet>
@@ -272,16 +297,55 @@ export default function BlogPage() {
                 <option value="mike@example.com">Not greater than</option>
               </select>
               {!showInputText ? (
-                <select id="value" name="value" value={formData.value} onChange={handleChange} required>
-                  <option value="">Enter value</option>
-                  {conditionData.map((item, index) => {
-                    return (
-                      <option value={item.value} key={index}>
-                        {item.name}
-                      </option>
-                    );
-                  })}
-                </select>
+                // <select id="value" name="value" value={formData.value} onChange={handleChange} required>
+                //   <option value="">Enter value</option>
+                //   {conditionData.map((item, index) => {
+                //     return (
+                //       <option value={item.value} key={index}>
+                //         {item.name}
+                //       </option>
+                //     );
+                //   })}
+                // </select>
+                <FormControl className={classes.formControl}>
+                  <InputLabel id="mutiple-select-label">Multiple Select</InputLabel>
+                  <Selected
+                    labelId="mutiple-select-label"
+                    multiple
+                    value={selected.map((item) => item)}
+                    onChange={handleMultipleChange}
+                    renderValue={(selected) => selected.map((item) => item).join(', ')}
+                    MenuProps={MenuProps}
+                  >
+                    <MenuItem
+                      value="all"
+                      classes={{
+                        root: isAllSelected ? classes.selectedAll : '',
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Checkbox
+                          classes={{ indeterminate: classes.indeterminateColor }}
+                          checked={isAllSelected}
+                          indeterminate={selected.length > 0 && selected.length < options.length}
+                        />
+                      </ListItemIcon>
+                      <ListItemText classes={{ primary: classes.selectAllText }} primary="Select All" />
+                    </MenuItem>
+                    {conditionData
+                      .map((c) => c.value)
+                      .map((option, index) => {
+                        return (
+                          <MenuItem key={index} value={option}>
+                            <ListItemIcon>
+                              <Checkbox checked={selected.indexOf(option) > -1} />
+                            </ListItemIcon>
+                            <ListItemText primary={option} />
+                          </MenuItem>
+                        );
+                      })}
+                  </Selected>
+                </FormControl>
               ) : (
                 <input
                   type="text"
@@ -393,6 +457,7 @@ export default function BlogPage() {
                       <select
                         id="field"
                         name="field"
+                        className="faculty-select"
                         value={selectedCategory}
                         onChange={handleSelectedCategory}
                         required
@@ -406,7 +471,14 @@ export default function BlogPage() {
                               <option value="heatmap">Heatmap Chart</option> */}
                       </select>
 
-                      <select id="field" name="field" value={selectedChart} onChange={handleChartSelect} required>
+                      <select
+                        id="field"
+                        name="field"
+                        className="chart-select"
+                        value={selectedChart}
+                        onChange={handleChartSelect}
+                        required
+                      >
                         {/* <option value="">Select Chart</option> */}
                         <option value="bar">Bar Chart</option>
                         <option value="area">Area Chart</option>
@@ -418,23 +490,21 @@ export default function BlogPage() {
                     </div>
 
                     <div>
-                      <Charts selectedChart={selectedChart} selectedCategory={selectedCategory} />
+                      <ChartComponent xAxis={formData.field} data={resultData} />
                     </div>
-
-                    <div className="submit-btn">
-                      <button className="close-button" onClick={() => setShowChartPopup(false)}>
-                        Close
-                      </button>
-                    </div>
+                  </div>
+                  <div className="chart-submit-btn">
+                    <button className="close-button" onClick={() => setShowChartPopup(false)}>
+                      Close
+                    </button>
                   </div>
                 </div>
 
-                {/* <Link to="/chart" style={{ textDecoration: "none" }}>
-                          <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
-                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
-                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
-                          </button>
-                        </Link> */}
+                <div className="submit-btn">
+                  <button className="close-button" onClick={() => setShowChartPopup(false)}>
+                    Close
+                  </button>
+                </div>
               </div>
             )}
           </div>
