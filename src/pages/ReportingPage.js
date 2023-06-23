@@ -13,7 +13,7 @@ import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // import Iconify from '../components/iconify';
 // import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
-// import POSTS from '../_mock/blog';
+import POSTS from '../_mock/blog';
 import {Charts} from '../layouts/charts/Charts'
 
 
@@ -36,15 +36,6 @@ const options = [
     { value: 'Faculty', label: 'Faculty' },
   ];
 
-  // const Table = () => {
-  //   Mock data for the table
-  //   const tableData = [
-  //     { id: 1, firstName: 'John', lastName: 'Doe', gender:'Male', faculty:'Technology' },
-  //     { id: 2, firstName: 'Jane', lastName: 'Smith', gender:'Female', faculty:'Science'},
-  //     { id: 3, firstName: 'Bob', lastName:'Johnson', gender:'Male', faculty:'Arts' },
-  //   ];
-  // }
-
   const tableData = [
     { id: 1, firstName: 'John', lastName: 'Doe', gender:'Male', faculty:'Technology' },
     { id: 2, firstName: 'Jane', lastName: 'Smith', gender:'Female', faculty:'Science'},
@@ -54,6 +45,7 @@ const options = [
 
 export default function ReportingPage() {
     const [showPopup, setShowPopup] = useState(false);
+    const [showDetailsPopup, setShowDetailsPopup] = useState(false)
     const [showChartPopup, setShowChartPopup] = useState(false);
     const [selectedChart, setSelectedChart] = useState('bar');
     const [selectedCategory, setSelectedCategory] = useState('faculty');
@@ -131,6 +123,10 @@ export default function ReportingPage() {
     //   setSelectedOptions(selectedOptions);
     // };
 
+    const handleProfileCheck = () =>{
+      setShowDetailsPopup(true)
+      console.log(setShowDetailsPopup)
+    }
    
 
     const handleGenerateReport = () => {
@@ -149,6 +145,8 @@ export default function ReportingPage() {
       // console.log(filteredData);
       // You can generate the report or perform any other operations here
     };
+
+   
 
   
 
@@ -185,7 +183,7 @@ export default function ReportingPage() {
         {/* Category selection */}
        
 
-        <div className={`form-container ${showPopup || showChartPopup ? 'opacity-reduced' : ''}`}>
+        <div className={`form-container ${showPopup || showChartPopup || showDetailsPopup ? 'opacity-reduced' : ''}`}>
             {/* <h2>Contact Form</h2> */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
               <Typography variant="h4" gutterBottom>
@@ -346,7 +344,7 @@ export default function ReportingPage() {
                               <tr key={row.id}>
                                 <td>{row.id}</td>
                                 <td>
-                                <Link to={`/profile/${row.id}`}>{row.firstName}</Link>
+                                <Link to={`/profile/${row.id}`} className="no-link-decoration" onClick={handleProfileCheck}>{row.firstName}</Link>
                                 </td>
                                 <td>{row.lastName}</td>
                                 <td>{row.gender}</td>
@@ -406,6 +404,103 @@ export default function ReportingPage() {
                     </div>
                 )}
 
+                {/* Profile popup */}
+                {showDetailsPopup && (
+                    <div className="popup">
+                      <div className="report-container">
+                        <h2>Profile</h2>
+                        <div className="student-profile">
+                          <div className="profile-image-section">
+                            <img src={student.profileImage} alt="Profile" />
+                          </div>
+                          <div className="profile-details">
+                            <div className="profile-row">
+                              <div className="profile-label">First Name:</div>
+                              <input type="text" value={student.firstName} readOnly />
+                              <div className="profile-label">Middle Name:</div>
+                              <input type="text" value={student.middleName} readOnly />
+                              <div className="profile-label">Last Name:</div>
+                              <input type="text" value={student.lastSurname} readOnly />
+                            </div>
+                            <div className="profile-row">
+                              <div className="profile-label">Department ID:</div>
+                              <input type="text" value={student.departmentID} readOnly />
+                              <div className="profile-label">Faculty:</div>
+                              <input type="text" value={student.faculty} readOnly />
+                              <div className="profile-label">Email:</div>
+                              <input type="text" value={student.email} readOnly />
+                            </div>
+                            <div className="profile-row">
+                              <div className="profile-label">Gender:</div>
+                              <input type="text" value={student.gender} readOnly />
+                              <div className="profile-label">Date of Birth:</div>
+                              <input type="text" value={student.dateOfBirth} readOnly />
+                              <div className="profile-label">Nationality:</div>
+                              <input type="text" value={student.nationality} readOnly />
+                            </div>
+                            <div className="profile-row">
+                              <div className="profile-label">Year of Entry:</div>
+                              <input type="text" value={student.yearOfEntryIntoUI} readOnly />
+                              <div className="profile-label">Mode of Entry:</div>
+                              <input type="text" value={student.modeOfEntry} readOnly />
+                              <div className="profile-label">State of Origin:</div>
+                              <input type="text" value={student.stateOfOrigin} readOnly />
+                            </div>
+                            <div className="profile-row">
+                              <div className="profile-label">Student LGA:</div>
+                              <input type="text" value={student.studentLga} readOnly />
+                              <div className="profile-label">Home Town:</div>
+                              <input type="text" value={student.homeTown} readOnly />
+                              <div className="profile-label">Permanent Address:</div>
+                              <input type="text" value={student.permanentAddress} readOnly />
+                            </div>
+                            <div className="profile-row">
+                              <div className="profile-label">Study Status:</div>
+                              <input type="text" value={student.studyStatus} readOnly />
+                              <div className="profile-label">Study Level:</div>
+                              <input type="text" value={student.studyLevel} readOnly />
+                              <div className="profile-label">Programme Entry Year:</div>
+                              <input type="text" value={student.presentProgrammeEntryYear} readOnly />
+                            </div>
+                            <div className="profile-row">
+                              <div className="profile-label">Student Matric Number:</div>
+                              <input type="text" value={student.studentMatricNum} readOnly />
+                              <div className="profile-label">JAMB Registration Number:</div>
+                              <input type="text" value={student.jambRegNumber} readOnly />
+                              <div className="profile-label">Marital Status:</div>
+                              <input type="text" value={student.maritalStatus} readOnly />
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <div className='submit-btn'>
+                          {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                              <button type="submit" onClick={handleClick} >
+                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                              </button>
+                          </Link> */}
+
+                          {/* <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                                <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                          </button> */}
+
+                          {/* <Link to="/chart" style={{ textDecoration: "none" }}>
+                            <button type="submit" onClick={handleClick} className='close-button' style={{ marginRight: '8px' }}>
+                                  <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
+                                  <span className="button-text" onClick={handleGenerateChart}>Generate Charts</span>
+                            </button>
+                          </Link> */}
+                          <button className="close-button" onClick={() => setShowDetailsPopup(false)}>
+                            Close
+                          </button>
+                          
+                        </div>
+                    </div>
+                  </div>
+                )}
+
                    {showChartPopup && (
                     <div className="popup">
                       <div className="report-container">
@@ -423,9 +518,6 @@ export default function ReportingPage() {
                               <option value="bar">Faculty</option>
                               <option value="area">Department</option>
                               <option value="line">Programme</option>
-                              {/* <option value="radar">Radar Chart</option>
-                              <option value="scatter">Scatter Chart</option>
-                              <option value="heatmap">Heatmap Chart</option> */}
                             </select>
 
 
@@ -435,7 +527,6 @@ export default function ReportingPage() {
                                 className='chart-select'
                                 value={selectedChart}
                                 onChange={handleChartSelect}
-                                setSelectedChart={setSelectedChart}
                                 required
                             >
                                 {/* <option value="">Select Chart</option> */}
@@ -451,7 +542,7 @@ export default function ReportingPage() {
                           </div>
 
                           <div>
-                            <Charts selectedChart={selectedChart} selectedCategory={selectedCategory} />   
+                            <Charts handleChartSelect={handleChartSelect} setSelectedChart={setSelectedChart} selectedChart={selectedChart} selectedCategory={selectedCategory} />   
                           </div>
 
                           

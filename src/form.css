@@ -212,6 +212,57 @@ tr:nth-child(even) {
   background-color: #dedada;
 }
 
+.no-link-decoration {
+  text-decoration: none;
+  color: rgb(55, 53, 53);
+}
+
+.student-profile {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.profile-image-section {
+  flex: 1;
+  max-width: 200px;
+  margin-right: 20px;
+}
+
+.profile-image-section img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.profile-details {
+  flex: 2;
+}
+
+.profile-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.profile-label {
+  flex: 1;
+  font-weight: bold;
+}
+
+input[type="text"] {
+  flex: 2;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+
+
+
 .chart-content{
   display: flex;
   flex-direction: column;
@@ -310,6 +361,16 @@ tr:nth-child(even) {
       padding: 10px;
     }
 
+    .profile-row {
+      flex-wrap: wrap;
+    }
+  
+    .profile-row input[type="text"] {
+      flex: 1;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
     /* .form-container > .form-group.middle > select {
       margin:10px 0;
     } */
@@ -366,5 +427,12 @@ tr:nth-child(even) {
   input {
     padding: 2px 4px;
   }
+
+  .profile-row input[type="text"] {
+    flex: 100%;
+    margin-right: 0;
+  }
 }
+
+
   
