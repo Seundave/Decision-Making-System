@@ -83,7 +83,7 @@ export function Charts({selectedChart, selectedCategory}){
       // };
       // const [showChart, setShowChart] =
 
-      const getChartType = (selectedChart) => {
+      const getChartType = () => {
         // alert(1)
         switch (selectedChart) {
           case "bar":
