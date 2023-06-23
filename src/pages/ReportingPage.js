@@ -531,12 +531,12 @@ export default function ReportingPage() {
                             >
                                 {/* <option value="">Select Chart</option> */}
                                 <option value="bar">Bar Chart</option>
-                                <option value="pie">Pie Chart</option>
                                 <option value="area">Area Chart</option>
                                 <option value="line">Line Chart</option>
                                 <option value="radar">Radar Chart</option>
                                 <option value="scatter">Scatter Chart</option>
                                 <option value="heatmap">Heatmap Chart</option>
+                                <option value="pie">Pie Chart</option>
                             </select>
 
                           </div>
