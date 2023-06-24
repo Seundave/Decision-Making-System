@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react"
 import Chart from "react-apexcharts";
 
-export function Charts({selectedChart, selectedCategory}){
+export function Charts({selectedChart, selectedCategory, loading}){
+  
+  
 
   const getSeriesData = (category) => {
     switch (category) {
@@ -108,14 +110,16 @@ export function Charts({selectedChart, selectedCategory}){
     return(
         <div>
             <div>
-                <Chart
-                    options={state.options}
-                    // {("bar" || "area"|| "line"|| "radar"||"scatter"|| "heatmap" ? series={...state.series} : series={state.pievalues})}
-                    series={state.series}
-                    type={getChartType()}
-                    width="450"
-                    onChange={changeChart}
-                />
+                {loading ? <p> Loading...</p> : 
+                  <Chart
+                  options={state.options}
+                  // {("bar" || "area"|| "line"|| "radar"||"scatter"|| "heatmap" ? series={...state.series} : series={state.pievalues})}
+                  series={state.series}
+                  type={getChartType()}
+                  width="450"
+                  onChange={changeChart}
+              />
+                }
             </div>
 
             {/* <div>

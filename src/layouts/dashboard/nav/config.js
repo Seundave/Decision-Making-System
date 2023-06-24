@@ -28,12 +28,12 @@ const navConfig = [
   //   path: '/dashboard/blog',
   //   icon: icon('ic_blog'),
   // },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-    dropdown:false
-  },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  //   dropdown:false
+  // },
   {
     title: 'category',
     path: '/dashboard/category',
@@ -63,7 +63,7 @@ const navConfig = [
   },
   {
     title: 'logout',
-    path: '/login',
+    path: '/logout',
     icon: icon('ic_logout'),
     dropdown:false
   },

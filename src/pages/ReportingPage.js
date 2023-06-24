@@ -13,7 +13,7 @@ import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // import Iconify from '../components/iconify';
 // import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
-import POSTS from '../_mock/blog';
+// import POSTS from '../_mock/blog';
 import {Charts} from '../layouts/charts/Charts'
 
 
@@ -37,9 +37,9 @@ const options = [
   ];
 
   const tableData = [
-    { id: 1, firstName: 'John', lastName: 'Doe', gender:'Male', faculty:'Technology' },
-    { id: 2, firstName: 'Jane', lastName: 'Smith', gender:'Female', faculty:'Science'},
-    { id: 3, firstName: 'Bob', lastName:'Johnson', gender:'Male', faculty:'Arts' },
+    { id: 1, firstName: 'John', middleName: 'Ayo', lastName: 'Doe', gender:'Male', faculty:'Technology', departmentID:'123456', email:'Ayo@gmail.com', dateOfBirth:'02-03-1998', nationality:'Nigeria', yearOfEntryIntoUI:'2015', modeOfEntry:'Pre-degree', stateOfOrigin:'Osun' , Lga:'Osun East', homeTown:'Osogbo', permanentAddress:'No 14, Akala Way', studyStatus:'Active', studyLevel:'500', presentProgrammeEntryYear:'2015', MatricNum:'NYC/2015/3567', jambRegNumber:'563738929292', maritalStatus:'Single'},
+    { id: 2, firstName: 'Jane', middleName: 'Flourence', lastName: 'Smith', gender:'Female', faculty:'Science', departmentID:'78956', email:'Smith@gmail.com', dateOfBirth:'04-06-1999', nationality:'Canada', yearOfEntryIntoUI:'2016', modeOfEntry:'JAMB', stateOfOrigin:'Ogun', Lga:'Ogun South', homeTown:'Sagamu', permanentAddress:'No 12, Providence Arena', studyStatus:'Inactive', studyLevel:'400', presentProgrammeEntryYear:'2013', MatricNum:'NYC/2013/4567', jambRegNumber:'282929292922', maritalStatus:'Married'},
+    { id: 3, firstName: 'Bob', middleName: 'Babatunde', lastName:'Johnson', gender:'Male', faculty:'Arts', departmentID:'346789', email:'Johnson@gmail.com', dateOfBirth:'06-03-2000', nationality:'USA', yearOfEntryIntoUI:'2019', modeOfEntry:'JAMB', stateOfOrigin:'Lagos', Lga:'Lagos West', homeTown:'Oshodi', permanentAddress:'No 16, Olonfi Way', studyStatus:'Active', studyLevel:'200', presentProgrammeEntryYear:'2014', MatricNum:'NYC/2014/3421', jambRegNumber:'90484746372822', maritalStatus:'Single' },
   ];
 // ----------------------------------------------------------------------
 
@@ -47,10 +47,12 @@ export default function ReportingPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [showDetailsPopup, setShowDetailsPopup] = useState(false)
     const [showChartPopup, setShowChartPopup] = useState(false);
+    const [ loading, setLoading] = useState(false);
+    const [studentIndex, setStudentIndex] = useState(null);
     const [selectedChart, setSelectedChart] = useState('bar');
     const [selectedCategory, setSelectedCategory] = useState('faculty');
-    const [filteredData, setFilteredData] = useState([]);
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    // const [filteredData, setFilteredData] = useState([]);
+    // const [selectedOptions, setSelectedOptions] = useState([]);
     const[formData, setFormData] = useState({
         name: '',
         category: '',
@@ -64,6 +66,10 @@ export default function ReportingPage() {
 
     const handleChartSelect = (event) => {
         setSelectedChart(event.target.value);
+        setLoading(true)
+        setTimeout(() => {
+          setLoading(false)
+        }, 500);
         console.log(setSelectedChart)
     };
 
@@ -71,10 +77,13 @@ export default function ReportingPage() {
         setSelectedCategory(event.target.value);
     };
 
-    const handleChange = (selectedOptions) => {
-    // Handle selected options
-      setFormData({...formData, selectedOptions});
-      console.log(selectedOptions);
+ 
+
+    const handleChange = (e) => {
+      setFormData({...formData, 
+        [e.target.name]:e.target.value},
+        );
+        console.log(formData)
     };
 
     // useEffect(() => {
@@ -95,20 +104,20 @@ export default function ReportingPage() {
     //   fetchData();
     // }, []);
     
-    useEffect(() => {
-      // Filter data based on selected options
-      const filterData = () => {
-        let filteredResults = formData;
+    // useEffect(() => {
+    //   // Filter data based on selected options
+    //   const filterData = () => {
+    //     let filteredResults = formData;
   
-        selectedOptions.forEach((option) => {
-          filteredResults = filteredResults.filter((item) => item[option]);
-        });
+    //     selectedOptions.forEach((option) => {
+    //       filteredResults = filteredResults.filter((item) => item[option]);
+    //     });
   
-        setFilteredData(filteredResults);
-      };
+    //     setFilteredData(filteredResults);
+    //   };
   
-      filterData();
-    }, [formData, selectedOptions]);
+    //   filterData();
+    // }, [formData, selectedOptions]);
 
     const handleClick = () => {
         setShowPopup(true);
@@ -123,17 +132,19 @@ export default function ReportingPage() {
     //   setSelectedOptions(selectedOptions);
     // };
 
-    const handleProfileCheck = () =>{
+    const handleProfileCheck = (index) =>{
       setShowDetailsPopup(true)
+      setStudentIndex(index)
       console.log(setShowDetailsPopup)
+
     }
    
 
     const handleGenerateReport = () => {
-      setFilteredData(filteredData)
+      // setFilteredData(filteredData)
       setShowPopup(true)
       // Perform any desired action with the filteredData
-      console.log(filteredData);
+      // console.log(filteredData);
       // You can generate the report or perform any other operations here
     };
 
@@ -200,7 +211,7 @@ export default function ReportingPage() {
                 id="email"
                 name="category"
                 value={formData.category}
-                onChange={handleChange}
+                onChange={(e) =>handleChange(e)}
                 required
             >
                 <option value="">Select category</option>
@@ -216,11 +227,12 @@ export default function ReportingPage() {
                     <label htmlFor="name">Report Fields</label>
                     <Select
                         isMulti
+                        // name="fields"
                         options={options}
                         className="multi-select"
                         classNamePrefix="select"
                         placeholder="Select students to display"
-                        onChange={handleChange}
+                        // onChange={(e) =>handleChange(e)}
                         styles={{
                             control: (provided) => ({
                               ...provided,
@@ -237,7 +249,8 @@ export default function ReportingPage() {
                         id="condition"
                         name="condition"
                         value={formData.condition}
-                        onChange={handleChange}
+                        // selectedOptions={selectedOptions}
+                        onChange={(e) =>handleChange(e)}
                         required
                     >
                         <option value="">Select conditions</option>
@@ -251,7 +264,7 @@ export default function ReportingPage() {
                         id="operator"
                         name="operator"
                         value={formData.operator}
-                        onChange={handleChange}
+                        onChange={(e) =>handleChange(e)}
                         required
                     >
                         <option value="">Operator</option>
@@ -266,7 +279,7 @@ export default function ReportingPage() {
                         id="value"
                         name="value"
                         value={formData.value}
-                        onChange={handleChange}
+                        onChange={(e) =>handleChange(e)}
                         required
                     >
                         <option value="">Enter value</option>
@@ -282,7 +295,7 @@ export default function ReportingPage() {
                     id="field"
                     name="field"
                     value={formData.field}
-                    onChange={handleChange}
+                    onChange={(e) =>handleChange(e)}
                     required
                 >
                     <option value="">Select Fields</option>
@@ -309,13 +322,13 @@ export default function ReportingPage() {
                 <div className='line'/>
                 <div className="submit-btn" >
                     {/* <button type="submit" onClick={handleClick}><BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>Generate Report</button> */}
-                    <button type="submit" onClick={handleClick} style={{ marginRight: '8px' }}>
+                    <button type="submit" onClick={handleGenerateReport} style={{ marginRight: '8px' }}>
                       <BsArrowRepeat size={20} style={{ marginRight: '8px' }}/>
-                      <span className="button-text" onClick={handleGenerateReport}>Generate Report</span>
+                      <span className="button-text">Generate Report</span>
                     </button>
 
                     
-                    
+                {/* Report Popup    */}
                 </div>
                 {showPopup && (
                     <div className="popup">
@@ -340,11 +353,11 @@ export default function ReportingPage() {
                           </thead>
                           <tbody>
 
-                            {tableData.map((row) => (
-                              <tr key={row.id}>
+                            {tableData.map((row, index) => (
+                              <tr key={row.id} onClick={handleProfileCheck(index)}>
                                 <td>{row.id}</td>
-                                <td>
-                                <Link to={`/profile/${row.id}`} className="no-link-decoration" onClick={handleProfileCheck}>{row.firstName}</Link>
+                                <td >
+                                  {row.firstName}
                                 </td>
                                 <td>{row.lastName}</td>
                                 <td>{row.gender}</td>
@@ -410,65 +423,65 @@ export default function ReportingPage() {
                       <div className="report-container">
                         <h2>Profile</h2>
                         <div className="student-profile">
-                          <div className="profile-image-section">
+                          {/* <div className="profile-image-section">
                             <img src={student.profileImage} alt="Profile" />
-                          </div>
+                          </div> */}
                           <div className="profile-details">
                             <div className="profile-row">
                               <div className="profile-label">First Name:</div>
-                              <input type="text" value={student.firstName} readOnly />
+                              <input type="text" value={tableData[studentIndex].firstName} readOnly />
                               <div className="profile-label">Middle Name:</div>
-                              <input type="text" value={student.middleName} readOnly />
+                              <input type="text" value={tableData[studentIndex].middleName} readOnly />
                               <div className="profile-label">Last Name:</div>
-                              <input type="text" value={student.lastSurname} readOnly />
+                              <input type="text" value={tableData[studentIndex].lastName} readOnly />
                             </div>
                             <div className="profile-row">
                               <div className="profile-label">Department ID:</div>
-                              <input type="text" value={student.departmentID} readOnly />
+                              <input type="text" value={tableData[studentIndex].departmentID} readOnly />
                               <div className="profile-label">Faculty:</div>
-                              <input type="text" value={student.faculty} readOnly />
+                              <input type="text" value={tableData[studentIndex].faculty} readOnly />
                               <div className="profile-label">Email:</div>
-                              <input type="text" value={student.email} readOnly />
+                              <input type="text" value={tableData[studentIndex].email} readOnly />
                             </div>
                             <div className="profile-row">
                               <div className="profile-label">Gender:</div>
-                              <input type="text" value={student.gender} readOnly />
+                              <input type="text" value={tableData[studentIndex].gender} readOnly />
                               <div className="profile-label">Date of Birth:</div>
-                              <input type="text" value={student.dateOfBirth} readOnly />
+                              <input type="text" value={tableData[studentIndex].dateOfBirth} readOnly />
                               <div className="profile-label">Nationality:</div>
-                              <input type="text" value={student.nationality} readOnly />
+                              <input type="text" value={tableData[studentIndex].nationality} readOnly />
                             </div>
                             <div className="profile-row">
                               <div className="profile-label">Year of Entry:</div>
-                              <input type="text" value={student.yearOfEntryIntoUI} readOnly />
+                              <input type="text" value={tableData[studentIndex].yearOfEntryIntoUI} readOnly />
                               <div className="profile-label">Mode of Entry:</div>
-                              <input type="text" value={student.modeOfEntry} readOnly />
+                              <input type="text" value={tableData[studentIndex].modeOfEntry} readOnly />
                               <div className="profile-label">State of Origin:</div>
-                              <input type="text" value={student.stateOfOrigin} readOnly />
+                              <input type="text" value={tableData[studentIndex].stateOfOrigin} readOnly />
                             </div>
                             <div className="profile-row">
-                              <div className="profile-label">Student LGA:</div>
-                              <input type="text" value={student.studentLga} readOnly />
+                              <div className="profile-label"> LGA:</div>
+                              <input type="text" value={tableData[studentIndex].Lga} readOnly />
                               <div className="profile-label">Home Town:</div>
-                              <input type="text" value={student.homeTown} readOnly />
+                              <input type="text" value={tableData[studentIndex].homeTown} readOnly />
                               <div className="profile-label">Permanent Address:</div>
-                              <input type="text" value={student.permanentAddress} readOnly />
+                              <input type="text" value={tableData[studentIndex].permanentAddress} readOnly />
                             </div>
                             <div className="profile-row">
                               <div className="profile-label">Study Status:</div>
-                              <input type="text" value={student.studyStatus} readOnly />
+                              <input type="text" value={tableData[studentIndex].studyStatus} readOnly />
                               <div className="profile-label">Study Level:</div>
-                              <input type="text" value={student.studyLevel} readOnly />
+                              <input type="text" value={tableData[studentIndex].studyLevel} readOnly />
                               <div className="profile-label">Programme Entry Year:</div>
-                              <input type="text" value={student.presentProgrammeEntryYear} readOnly />
+                              <input type="text" value={tableData[studentIndex].presentProgrammeEntryYear} readOnly />
                             </div>
                             <div className="profile-row">
-                              <div className="profile-label">Student Matric Number:</div>
-                              <input type="text" value={student.studentMatricNum} readOnly />
+                              <div className="profile-label">Matric Number:</div>
+                              <input type="text" value={tableData[studentIndex].MatricNum} readOnly />
                               <div className="profile-label">JAMB Registration Number:</div>
-                              <input type="text" value={student.jambRegNumber} readOnly />
+                              <input type="text" value={tableData[studentIndex].jambRegNumber} readOnly />
                               <div className="profile-label">Marital Status:</div>
-                              <input type="text" value={student.maritalStatus} readOnly />
+                              <input type="text" value={tableData[studentIndex].maritalStatus} readOnly />
                             </div>
                           </div>
                         </div>
@@ -501,6 +514,7 @@ export default function ReportingPage() {
                   </div>
                 )}
 
+                {/* Chart Popup */}
                    {showChartPopup && (
                     <div className="popup">
                       <div className="report-container">
@@ -542,7 +556,7 @@ export default function ReportingPage() {
                           </div>
 
                           <div>
-                            <Charts handleChartSelect={handleChartSelect} setSelectedChart={setSelectedChart} selectedChart={selectedChart} selectedCategory={selectedCategory} />   
+                            <Charts handleChartSelect={handleChartSelect} loading ={loading} setSelectedChart={setSelectedChart} selectedChart={selectedChart} selectedCategory={selectedCategory} />   
                           </div>
 
                           
