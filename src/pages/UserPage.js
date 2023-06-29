@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../user.css'
 // @mui
 import {
@@ -30,7 +30,7 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+import userData from '../_mock/user';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +38,9 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'department', label: 'Department', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'password', label: 'Password', alignRight: false },
+  // { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
@@ -78,12 +80,20 @@ export default function UserPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    company: '',
+    department: '',
     role: '',
     email: '',
-    password: ''
+    password: '',
+    status:''
   });
+
+  const [USERLIST, setUSERLIST] = useState([])
+
+  useEffect(()=> {
+             setUSERLIST(userData)     
+  }, [])
   
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -136,6 +146,8 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
+   console.log(selected)
+
   const handleClickNewUser =()=>{
     setShowPopup(true);
   }
@@ -153,12 +165,14 @@ export default function UserPage() {
       [name]: value
     }));
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     // Handle form submission or further processing of the form data
-    console.log(formData);
+      
+      USERLIST.push(formData)
+      setShowPopup(false)
   };
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -197,7 +211,7 @@ export default function UserPage() {
         </Stack>
 
         <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar  userList={USERLIST}  setUSERLIST={setUSERLIST} selectedUser={selected} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -213,7 +227,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                    const { id, name, role, status, department, email, password, avatarUrl } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -231,11 +245,17 @@ export default function UserPage() {
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{department}</TableCell>
+
+                        {/* <TableCell align="left">{company}</TableCell> */}
 
                         <TableCell align="left">{role}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+
+                        <TableCell align="left">{email}</TableCell>
+
+                        <TableCell align="left">{password}</TableCell>
 
                         <TableCell align="left">
                           <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
@@ -311,7 +331,7 @@ export default function UserPage() {
                           id="role"
                           name="role"
                           value={formData.value}
-                          onChange={handleChange}
+                          onChange={handleInputChange}
                           required
                       >
                           <option value="">Enter value</option>
@@ -324,10 +344,10 @@ export default function UserPage() {
                   <div className="role-group">
                     <label htmlFor="email">Department:</label>
                     <select
-                          id="role"
-                          name="role"
+                          id="department"
+                          name="department"
                           value={formData.value}
-                          onChange={handleChange}
+                          onChange={handleInputChange}
                           required
                       >
                           <option value="">Enter value</option>
@@ -351,15 +371,15 @@ export default function UserPage() {
                     <label htmlFor="password">Password:</label>
                     <input type="password" id="password" name="password" value={formData.password} onChange={handleInputChange} required />
                   </div>
-                  
-                  
-                </form>
-                <div className='submit-btn'>
+                  <div className='submit-btn'>
                   <button type="submit" className='newuser-button'>Create new user</button>
                   <button className="close-button" onClick={() => setShowPopup(false)}>
                     Close
                   </button>
                 </div>
+                  
+                </form>
+                
               </div>
             </div>
                 )}
@@ -389,8 +409,8 @@ export default function UserPage() {
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+        <MenuItem sx={{ color: 'error.main' }} >
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }}  />
           Delete
         </MenuItem>
       </Popover>
