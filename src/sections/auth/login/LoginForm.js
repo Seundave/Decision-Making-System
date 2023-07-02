@@ -1,5 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -12,6 +14,7 @@ import { AuthContext } from '../../../routes';
 // import userContext from 'routes.js'
 // components
 import Iconify from '../../../components/iconify';
+
 
 
 
@@ -45,6 +48,18 @@ export default function LoginForm() {
   // };
 
  
+//   const notify = () =>{
+//     toast.success('Message sent', {
+//         position: "top-right",
+//         autoClose: 5000,
+//         hideProgressBar: false,
+//         closeOnClick: true,
+//         pauseOnHover: true,
+//         draggable: true,
+//         progress: undefined,
+//     });
+
+// }
 
 
 
@@ -53,7 +68,8 @@ export default function LoginForm() {
     const user = users.find(user => user.email === data.email);
 
     if (!user) {
-      alert('User not found.');
+      // alert('User not found.');
+      toast.error('User not found');
       return;
     }
     // checkInputs()
@@ -64,12 +80,32 @@ export default function LoginForm() {
     if (user && user.password === data.password) {
       // setCurrentUser(user);
       navigate('/dashboard', { replace: true });
+      toast.success('Login successful!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+      // toast.success('Login successful');
       // setLoginError(null);
       // console.log('Login successful!');
       // console.log(user)
     } else {
       // setLoginError('Invalid password.');
-      alert(' Invalid password')
+      toast.error('Invalid password', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+      // toast.error('Invalid password');
+      // alert(' Invalid password')
     }
     
   };
@@ -119,9 +155,10 @@ export default function LoginForm() {
 
       {loginError && <p>{loginError}</p>}
 
-      <LoadingButton type="submit" fullWidth size="large" variant="contained">
+      <LoadingButton type="submit" fullWidth size="large" variant="contained" >
         Login
       </LoadingButton>
+      <ToastContainer/>
       </form>
     </>
   );
