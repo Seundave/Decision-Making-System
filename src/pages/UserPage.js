@@ -2,6 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../user.css'
 // @mui
 import {
@@ -167,10 +169,22 @@ export default function UserPage() {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission or further processing of the form data
-      
+    
+    localStorage.setItem('formData', JSON.stringify(formData));
+    console.log('Form data stored:', formData);
+
       USERLIST.push(formData)
       setShowPopup(false)
+      toast.success('User created successful!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+      setFormData('')
   };
 
 
@@ -335,9 +349,10 @@ export default function UserPage() {
                           required
                       >
                           <option value="">Enter value</option>
-                          <option value="john@example.com">john@example.com</option>
-                          <option value="jane@example.com">jane@example.com</option>
-                          <option value="mike@example.com">mike@example.com</option>
+                          <option value="vice-chancellor">Vice Chancellor</option>
+                          <option value="director">Director</option>
+                          <option value="registrar">Registrar</option>
+                          <option value="vice-registrar">Vice Registrar</option>
                     </select>
                   </div>
 
@@ -351,9 +366,11 @@ export default function UserPage() {
                           required
                       >
                           <option value="">Enter value</option>
-                          <option value="john@example.com">john@example.com</option>
-                          <option value="jane@example.com">jane@example.com</option>
-                          <option value="mike@example.com">mike@example.com</option>
+                          <option value="medicine">Medicine</option>
+                          <option value="engineering">Engineering</option>
+                          <option value="psycology">Psycology</option>
+                          <option value="art">Art</option>
+                          <option value="science">Science</option>
                     </select>
                   </div>
                   
@@ -377,7 +394,7 @@ export default function UserPage() {
                     Close
                   </button>
                 </div>
-                  
+                <ToastContainer/>
                 </form>
                 
               </div>
