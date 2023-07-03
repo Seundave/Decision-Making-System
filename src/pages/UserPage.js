@@ -1,8 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
-import '../user.css';
+import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../user.css'
 // @mui
 import {
   Card,
@@ -30,15 +32,17 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+import userData from '../_mock/user';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'department', label: 'Department', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'password', label: 'Password', alignRight: false },
+  // { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
@@ -78,11 +82,19 @@ export default function UserPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    company: '',
+    department: '',
     role: '',
     email: '',
     password: '',
+    status:''
   });
+
+  const [USERLIST, setUSERLIST] = useState([])
+
+  useEffect(()=> {
+             setUSERLIST(userData)     
+  }, [])
+  
 
   const [open, setOpen] = useState(null);
 
@@ -136,7 +148,9 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
-  const handleClickNewUser = () => {
+   console.log(selected)
+
+  const handleClickNewUser =()=>{
     setShowPopup(true);
   };
 
@@ -153,12 +167,26 @@ export default function UserPage() {
       [name]: value,
     }));
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission or further processing of the form data
-    console.log(formData);
+    
+    localStorage.setItem('formData', JSON.stringify(formData));
+    console.log('Form data stored:', formData);
+
+      USERLIST.push(formData)
+      setShowPopup(false)
+      toast.success('User created successful!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+      setFormData('')
   };
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -197,7 +225,7 @@ export default function UserPage() {
         </Stack>
 
         <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar  userList={USERLIST}  setUSERLIST={setUSERLIST} selectedUser={selected} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -213,7 +241,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                    const { id, name, role, status, department, email, password, avatarUrl } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -231,11 +259,17 @@ export default function UserPage() {
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{department}</TableCell>
+
+                        {/* <TableCell align="left">{company}</TableCell> */}
 
                         <TableCell align="left">{role}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+
+                        <TableCell align="left">{email}</TableCell>
+
+                        <TableCell align="left">{password}</TableCell>
 
                         <TableCell align="left">
                           <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
@@ -313,21 +347,36 @@ export default function UserPage() {
 
                   {/* <div className="role-group">
                     <label htmlFor="email">Role:</label>
-                    <select id="role" name="role" value={formData.value} onChange={handleChange} required>
-                      <option value="">Enter value</option>
-                      <option value="john@example.com">john@example.com</option>
-                      <option value="jane@example.com">jane@example.com</option>
-                      <option value="mike@example.com">mike@example.com</option>
+                    <select
+                          id="role"
+                          name="role"
+                          value={formData.value}
+                          onChange={handleInputChange}
+                          required
+                      >
+                          <option value="">Enter value</option>
+                          <option value="vice-chancellor">Vice Chancellor</option>
+                          <option value="director">Director</option>
+                          <option value="registrar">Registrar</option>
+                          <option value="vice-registrar">Vice Registrar</option>
                     </select>
                   </div>
 
                   <div className="role-group">
                     <label htmlFor="email">Department:</label>
-                    <select id="role" name="role" value={formData.value} onChange={handleChange} required>
-                      <option value="">Enter value</option>
-                      <option value="john@example.com">john@example.com</option>
-                      <option value="jane@example.com">jane@example.com</option>
-                      <option value="mike@example.com">mike@example.com</option>
+                    <select
+                          id="department"
+                          name="department"
+                          value={formData.value}
+                          onChange={handleInputChange}
+                          required
+                      >
+                          <option value="">Enter value</option>
+                          <option value="medicine">Medicine</option>
+                          <option value="engineering">Engineering</option>
+                          <option value="psycology">Psycology</option>
+                          <option value="art">Art</option>
+                          <option value="science">Science</option>
                     </select>
                   </div> */}
 
@@ -350,24 +399,17 @@ export default function UserPage() {
 
                   <div className="form-group">
                     <label htmlFor="password">Password:</label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div> */}
-                </form>
-                <div className="submit-btn">
-                  <button type="submit" className="newuser-button">
-                    Create new user
-                  </button>
+                    <input type="password" id="password" name="password" value={formData.password} onChange={handleInputChange} required />
+                  </div>
+                  <div className='submit-btn'>
+                  <button type="submit" className='newuser-button'>Create new user</button>
                   <button className="close-button" onClick={() => setShowPopup(false)}>
                     Close
                   </button>
                 </div>
+                <ToastContainer/>
+                </form>
+                
               </div>
             </div>
           )}
@@ -397,8 +439,8 @@ export default function UserPage() {
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+        <MenuItem sx={{ color: 'error.main' }} >
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }}  />
           Delete
         </MenuItem>
       </Popover>

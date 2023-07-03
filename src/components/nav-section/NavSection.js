@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 // @mui
 import { Box, List, ListItemText } from '@mui/material';
 //
 import { StyledNavItem, StyledNavItemIcon } from './styles';
+
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +14,7 @@ NavSection.propTypes = {
 };
 
 export default function NavSection({ data = [], ...other }) {
-  // const [openDropdown, setOpenDropdown] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
 
   // const handleDropdownToggle = () => {
   //   setOpenDropdown(!openDropdown);
@@ -24,60 +26,23 @@ export default function NavSection({ data = [], ...other }) {
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
-        {data.map((item) => (
-          <NavItem key={item.title} item={item} 
-          />
+        {data.map((item) => {
+          if (item.title === 'category') {
+            return (
+              <>
+               <NavItem key={item.title} item={item} clicked={()=> setOpenDropdown(!openDropdown)}/>
+                { openDropdown && item.dropdownItems.map( el => <NavItem key={el.title} item={el} />)}
+  
+              </>);
+          } 
+            
+            
+            return <NavItem key={item.title} item={item} />;
           
-          // {data.map((item) => (
-          //   <NavItem key={item.title} item={item}/>
-          //   <React.Fragment key={item.path}>
-          //     <NavItem key={item.title} item={item} 
-          //   />
-          //   <ListItem button onClick={item.dropdownItems ? handleDropdownToggle : null}>
-          //       <ListItemText primary={item.title} />
-          //       <NavItem key={item.title} item={item}/>
-          //     </ListItem>
-          //   {openDropdown && item.dropdownItems && (
-          //     <List>
-          //       {item.dropdownItems.map((dropdownItem) => (
-          //         <MenuItem
-          //           key={dropdownItem.path}
-          //           onClick={handleDropdownClose}
-          //           selected={false}
-          //         >
-          //           {dropdownItem.title}
-          //         </MenuItem>
-          //       ))}
-          //     </List>
-          //   )}
-          //   </React.Fragment>
 
-      //     <List>
-      //   {data.map((item) => (
-      //     <React.Fragment key={item.path}>
-      //       <ListItem button onClick={item.dropdownItems ? handleDropdownToggle : null}>
-      //         <ListItemText primary={item.title} />
-      //       </ListItem>
-      //       {openDropdown && item.dropdownItems && (
-      //         <List>
-      //           {item.dropdownItems.map((dropdownItem) => (
-      //             <MenuItem
-      //               key={dropdownItem.path}
-      //               onClick={handleDropdownClose}
-      //               selected={false}
-      //             >
-      //               {dropdownItem.title}
-      //             </MenuItem>
-      //           ))}
-      //         </List>
-      //       )}
-      //     </React.Fragment>
-      //   ))}
-      // </List>
-
-
-          
-        ))}
+      
+        })
+        }
       </List>
     </Box>
   );
@@ -89,13 +54,16 @@ NavItem.propTypes = {
   item: PropTypes.object,
 };
 
-function NavItem({ item }) {
-  const { title, path, icon, info, dropdown} = item;
+function NavItem({ item, clicked}) {
+  const { title, path, icon, info } = item;
 
   return (
     <StyledNavItem
       component={RouterLink}
-      to={path}
+      to={title !== "category" && path}
+
+      onClick={clicked}
+      
       sx={{
         '&.active': {
           color: 'text.primary',
@@ -107,8 +75,6 @@ function NavItem({ item }) {
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
 
       <ListItemText disableTypography primary={title} />
-
-      {dropdown && dropdown}
 
       {info && info}
     </StyledNavItem>

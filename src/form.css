@@ -185,11 +185,16 @@
   .close-button {
     margin-top: 10px;
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: #007bff !important;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+  }
+
+  .close-button:hover{
+    background-color: #007bff !important;
+    color: #fff;
   }
 
   .table-container {
@@ -212,12 +217,81 @@ tr:nth-child(even) {
   background-color: #dedada;
 }
 
+.no-link-decoration {
+  text-decoration: none;
+  color: rgb(55, 53, 53);
+}
+
+/* .student-profile {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.profile-image-section {
+  flex: 1;
+  max-width: 200px;
+  margin-right: 20px;
+}
+
+.profile-image-section img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.profile-details {
+  flex: 2;
+}
+
+.profile-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.profile-label {
+  flex: 1;
+  font-weight: bold;
+}
+
+input[type="text"] {
+  flex: 2;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 14px;
+} */
+
+/* Responsive CSS */
+/* @media (max-width: 600px) {
+  .profile-row {
+    flex-wrap: wrap;
+  }
+
+  .profile-row input[type="text"] {
+    flex: 1;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .profile-row input[type="text"] {
+    flex: 100%;
+    margin-right: 0;
+  }
+} */
+
+
 .chart-content{
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding:50px 0px;
+  padding:20px 0px;
 }
 
 .chart-selection{
@@ -262,7 +336,7 @@ tr:nth-child(even) {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 }
 
 .chart-submit-btn > button{
@@ -270,11 +344,73 @@ tr:nth-child(even) {
   margin-right: 20px;
   font-family: Public Sans,sans-serif;
 }
+
+.profile-title{
+  padding: 10px 0px;
+}
+
+.image-container{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profile-img{
+  width:150px;
+  height:150px;
+  border-radius: 150px;
+  border: 1px solid rgb(5, 34, 77);
+  /* background-color: red; */
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.profile-img > img{
+  object-fit: contain;
+  /* max-width: 100%;
+  max-height: 100%; */
+}
+
+.profile-name{
+  font-family: Public Sans,sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.grid-input{
+  margin-bottom: 10px;
+}
+
+.grid-input > input{
+  font-family: Public Sans,sans-serif;
+}
 /* input {
   width: 100%;
   padding: 6px 10px;
   border: none;
   border-radius: 4px;
+} */
+
+/* .arrow-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+.arrow {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  transform: rotate(45deg);
+  margin-right: 0.5rem;
 } */
 
 /* Media Queries for Responsiveness */

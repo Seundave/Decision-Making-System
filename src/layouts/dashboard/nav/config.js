@@ -28,12 +28,12 @@ const navConfig = [
   //   path: '/dashboard/blog',
   //   icon: icon('ic_blog'),
   // },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-    dropdown:false
-  },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  //   dropdown:false
+  // },
   {
     title: 'category',
     path: '/dashboard/category',
@@ -45,8 +45,8 @@ const navConfig = [
     //   { path: '/subpage3', title: 'Subpage 3' },
     // ],
     dropdownItems: [
-      { path: '/dropdown/student', title: 'Student' },
-      { path: '/dropdown/staff', title: 'Staff' },
+      { path: '/category/student', title: 'Student', icon: icon('ic_lock')},
+      { path: '/category/staff', title: 'Staff', icon: icon('ic_lock') },
     ],
   },
   {
@@ -63,7 +63,7 @@ const navConfig = [
   },
   {
     title: 'logout',
-    path: '/login',
+    path: '/logout',
     icon: icon('ic_logout'),
     dropdown:false
   },
