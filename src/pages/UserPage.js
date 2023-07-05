@@ -4,7 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../user.css'
+import '../user.css';
 // @mui
 import {
   Card,
@@ -32,18 +32,15 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import userData from '../_mock/user';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'department', label: 'Department', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
-  { id: 'password', label: 'Password', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  // { id: 'password', label: 'Password', alignRight: false },
   { id: '' },
 ];
 
@@ -83,18 +80,32 @@ export default function UserPage() {
   const [formData, setFormData] = useState({
     name: '',
     department: '',
-    role: '',
+    role: 'superrole',
     email: '',
     password: '',
-    status:''
+    status: '',
   });
 
-  const [USERLIST, setUSERLIST] = useState([])
+  const [USERLIST, setUSERLIST] = useState([]);
 
-  useEffect(()=> {
-             setUSERLIST(userData)     
-  }, [])
-  
+  useEffect(() => {
+    // setUSERLIST(userData);
+    getUserList();
+  }, []);
+
+  const getUserList = async () => {
+    const authToken = localStorage.getItem('authToken');
+    const response = await axios.get(`http://localhost:5000/api/student/users`, {
+      headers: {
+        authorization: `Bearer ${authToken}`,
+      },
+    });
+    console.log({ response });
+    if (response.data.status) {
+      console.log(response.data.user);
+      setUSERLIST(response.data.user);
+    }
+  };
 
   const [open, setOpen] = useState(null);
 
@@ -125,12 +136,20 @@ export default function UserPage() {
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
+    // if (event.target.checked) {
+    //   const newSelecteds = USERLIST.map((n) => n.name);
+    //   setSelected(newSelecteds);
+    //   return;
+    // }
+    // setSelected([]);
+  };
+
+  const roles = {
+    superrole: 'superrole',
+    principal: 'principal',
+    director: 'director',
+    deans: 'deans',
+    hod: 'hod',
   };
 
   const handleClick = (event, name) => {
@@ -148,16 +167,8 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
-   console.log(selected)
-
-  const handleClickNewUser =()=>{
+  const handleClickNewUser = () => {
     setShowPopup(true);
-  };
-
-  const handleChange = (selectedOptions) => {
-    // Handle selected options
-    setFormData(selectedOptions);
-    console.log(selectedOptions);
   };
 
   const handleInputChange = (event) => {
@@ -167,26 +178,31 @@ export default function UserPage() {
       [name]: value,
     }));
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    
-    localStorage.setItem('formData', JSON.stringify(formData));
-    console.log('Form data stored:', formData);
+    console.log({ formData });
 
-      USERLIST.push(formData)
-      setShowPopup(false)
-      toast.success('User created successful!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-    });
-      setFormData('')
+    const response = await axios.post(`http://localhost:5000/api/student/create/admin`, formData);
+
+    if (response.data.status) {
+      alert('ejeie');
+    }
+
+    // console.log('Form data stored:', formData);
+
+    // USERLIST.push(formData);
+    // setShowPopup(false);
+    // toast.success('User created successful!', {
+    //   position: 'top-right',
+    //   autoClose: 5000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // });
+    // setFormData('');
   };
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -207,6 +223,7 @@ export default function UserPage() {
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+  console.log({ emptyRows, filteredUsers, isNotFound });
 
   return (
     <>
@@ -225,7 +242,14 @@ export default function UserPage() {
         </Stack>
 
         <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
-          <UserListToolbar  userList={USERLIST}  setUSERLIST={setUSERLIST} selectedUser={selected} numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          {/* <UserListToolbar
+            userList={USERLIST}
+            setUSERLIST={setUSERLIST}
+            selectedUser={selected}
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+          /> */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -240,26 +264,28 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, department, email, password, avatarUrl } = row;
+                  {/* .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) */}
+                  {USERLIST.map((row) => {
+                    // const { id, name, role, status, department, email, password, avatarUrl } = row;
+                    const { email, role, name } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={role} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={name} src={''} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{department}</TableCell>
+                        {/* <TableCell align="left">{department}</TableCell> */}
 
                         {/* <TableCell align="left">{company}</TableCell> */}
 
@@ -269,12 +295,6 @@ export default function UserPage() {
 
                         <TableCell align="left">{email}</TableCell>
 
-                        <TableCell align="left">{password}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
@@ -283,14 +303,14 @@ export default function UserPage() {
                       </TableRow>
                     );
                   })}
-                  {emptyRows > 0 && (
+                  {/* {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
-                  )}
+                  )} */}
                 </TableBody>
 
-                {isNotFound && (
+                {/* {isNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -312,7 +332,7 @@ export default function UserPage() {
                       </TableCell>
                     </TableRow>
                   </TableBody>
-                )}
+                )} */}
               </Table>
             </TableContainer>
           </Scrollbar>
@@ -330,62 +350,34 @@ export default function UserPage() {
           {showPopup && (
             <div className="user-popup">
               <div className="user-form">
-                <form className="form" onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                   <div className="form-group">
-                    <label htmlFor="name">
-                      Name:{' '}
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </label>
-                  </div>
-
-                  {/* <div className="role-group">
-                    <label htmlFor="email">Role:</label>
-                    <select
-                          id="role"
-                          name="role"
-                          value={formData.value}
-                          onChange={handleInputChange}
-                          required
-                      >
-                          <option value="">Enter value</option>
-                          <option value="vice-chancellor">Vice Chancellor</option>
-                          <option value="director">Director</option>
-                          <option value="registrar">Registrar</option>
-                          <option value="vice-registrar">Vice Registrar</option>
-                    </select>
+                    <label htmlFor="name">Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
 
                   <div className="role-group">
-                    <label htmlFor="email">Department:</label>
-                    <select
-                          id="department"
-                          name="department"
-                          value={formData.value}
-                          onChange={handleInputChange}
-                          required
-                      >
-                          <option value="">Enter value</option>
-                          <option value="medicine">Medicine</option>
-                          <option value="engineering">Engineering</option>
-                          <option value="psycology">Psycology</option>
-                          <option value="art">Art</option>
-                          <option value="science">Science</option>
+                    <label htmlFor="role">Role:</label>
+                    <select id="role" name="role" value={formData.value} onChange={handleInputChange} required>
+                      {Object.keys(roles).map((role) => {
+                        return <option value={roles[role]}>{roles[role]}</option>;
+                      })}
                     </select>
-                  </div> */}
+                  </div>
 
                   {/* <div className="form-group">
                     <label htmlFor="department">Department:</label>
                     <input type="text" id="department" name="department" value={formData.department} onChange={handleInputChange} required />
                   </div> */}
 
-                  {/* <div className="form-group">
+                  <div className="form-group">
                     <label htmlFor="email">Email:</label>
                     <input
                       type="email"
@@ -399,17 +391,25 @@ export default function UserPage() {
 
                   <div className="form-group">
                     <label htmlFor="password">Password:</label>
-                    <input type="password" id="password" name="password" value={formData.password} onChange={handleInputChange} required />
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
-                  <div className='submit-btn'>
-                  <button type="submit" className='newuser-button'>Create new user</button>
-                  <button className="close-button" onClick={() => setShowPopup(false)}>
-                    Close
-                  </button>
-                </div>
-                <ToastContainer/>
+                  <div className="submit-btn">
+                    <button type="submit" className="newuser-button">
+                      Create new user
+                    </button>
+                    <button className="close-button" onClick={() => setShowPopup(false)}>
+                      Close
+                    </button>
+                  </div>
+                  <ToastContainer />
                 </form>
-                
               </div>
             </div>
           )}
@@ -439,8 +439,8 @@ export default function UserPage() {
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }} >
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }}  />
+        <MenuItem sx={{ color: 'error.main' }}>
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
