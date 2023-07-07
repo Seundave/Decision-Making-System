@@ -69,7 +69,7 @@ export default function LoginForm() {
     console.log({ user });
     if (!user.data.status) {
       // alert('User not found.');
-      toast.error('User not found');
+      toast.error('Incorrect email address/password');
       return;
     }
     if (user.data.status) {

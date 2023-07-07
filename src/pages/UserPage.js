@@ -102,7 +102,6 @@ export default function UserPage() {
     });
     console.log({ response });
     if (response.data.status) {
-      console.log(response.data.user);
       setUSERLIST(response.data.user);
     }
   };
@@ -118,11 +117,31 @@ export default function UserPage() {
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
+  const [selectedSecond, setSelectedSecond] = useState({});
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpenMenu = (event) => {
+  const deleteUser = async () => {
+    console.log({ selectedSecond });
+    const authToken = localStorage.getItem('authToken');
+    setOpen(null);
+    const response = await axios.delete(
+      `http://localhost:5000/api/student/delete/user`,
+      { data: { email: selectedSecond.email } },
+      {
+        headers: {
+          authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    if (response.data.status) {
+      getUserList();
+    }
+  };
+
+  const handleOpenMenu = (event, selectedSecond) => {
     setOpen(event.currentTarget);
+    setSelectedSecond(selectedSecond);
   };
 
   const handleCloseMenu = () => {
@@ -136,12 +155,12 @@ export default function UserPage() {
   };
 
   const handleSelectAllClick = (event) => {
-    // if (event.target.checked) {
-    //   const newSelecteds = USERLIST.map((n) => n.name);
-    //   setSelected(newSelecteds);
-    //   return;
-    // }
-    // setSelected([]);
+    if (event.target.checked) {
+      const newSelecteds = USERLIST.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
   };
 
   const roles = {
@@ -180,27 +199,19 @@ export default function UserPage() {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log({ formData });
 
     const response = await axios.post(`http://localhost:5000/api/student/create/admin`, formData);
-
+    setUSERLIST(response.data.user);
     if (response.data.status) {
-      alert('ejeie');
+      toast.success('User created successful!');
+      setShowPopup(false);
     }
 
     // console.log('Form data stored:', formData);
 
     // USERLIST.push(formData);
     // setShowPopup(false);
-    // toast.success('User created successful!', {
-    //   position: 'top-right',
-    //   autoClose: 5000,
-    //   hideProgressBar: false,
-    //   closeOnClick: true,
-    //   pauseOnHover: true,
-    //   draggable: true,
-    //   progress: undefined,
-    // });
+
     // setFormData('');
   };
 
@@ -242,14 +253,14 @@ export default function UserPage() {
         </Stack>
 
         <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
-          {/* <UserListToolbar
+          <UserListToolbar
             userList={USERLIST}
             setUSERLIST={setUSERLIST}
             selectedUser={selected}
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
-          /> */}
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -264,16 +275,15 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {/* .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) */}
-                  {USERLIST.map((row) => {
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // const { id, name, role, status, department, email, password, avatarUrl } = row;
                     const { email, role, name } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const selectedUser = selected.indexOf(email) !== -1;
 
                     return (
-                      <TableRow hover key={role} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={email} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, email)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
@@ -296,21 +306,25 @@ export default function UserPage() {
                         <TableCell align="left">{email}</TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={(e) => handleOpenMenu(e, { email, name, role })}
+                          >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
                     );
                   })}
-                  {/* {emptyRows > 0 && (
+                  {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
                     </TableRow>
-                  )} */}
+                  )}
                 </TableBody>
 
-                {/* {isNotFound && (
+                {isNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -332,7 +346,7 @@ export default function UserPage() {
                       </TableCell>
                     </TableRow>
                   </TableBody>
-                )} */}
+                )}
               </Table>
             </TableContainer>
           </Scrollbar>
@@ -350,6 +364,7 @@ export default function UserPage() {
           {showPopup && (
             <div className="user-popup">
               <div className="user-form">
+                <h1>Create a user </h1>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
                     <label htmlFor="name">Name:</label>
@@ -365,7 +380,14 @@ export default function UserPage() {
 
                   <div className="role-group">
                     <label htmlFor="role">Role:</label>
-                    <select id="role" name="role" value={formData.value} onChange={handleInputChange} required>
+                    <select
+                      id="role"
+                      name="role"
+                      value={formData.value}
+                      className="select-form"
+                      onChange={handleInputChange}
+                      required
+                    >
                       {Object.keys(roles).map((role) => {
                         return <option value={roles[role]}>{roles[role]}</option>;
                       })}
@@ -439,7 +461,7 @@ export default function UserPage() {
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem sx={{ color: 'error.main' }} onClick={deleteUser}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
