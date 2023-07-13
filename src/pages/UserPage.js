@@ -164,11 +164,11 @@ export default function UserPage() {
   };
 
   const roles = {
-    superrole: 'superrole',
-    principal: 'principal',
-    director: 'director',
-    deans: 'deans',
-    hod: 'hod',
+    superrole: 'Superrole',
+    principal: 'Principal',
+    director: 'Director',
+    deans: 'Deans',
+    hod: 'HOD',
   };
 
   const handleClick = (event, name) => {

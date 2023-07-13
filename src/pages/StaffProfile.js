@@ -20,36 +20,36 @@ import {
 
 // ----------------------------------------------------------------------
 
-export default function CategoriesPage() {
+export default function StaffPage() {
   const theme = useTheme();
 
   return (
     <>
       <Helmet>
-        <title> Category | Minimal UI </title>
+        <title> Staff Page </title>
       </Helmet>
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Student's Page
+          Staff's Page
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
             {/* <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} /> */}
-            <AppWidgetSummary title="Total Number of Postgraduates" number={714000}  />
+            <AppWidgetSummary title="Total Number of Senior Technical Staffs" number={714000}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total number of Undergraduates" number={1352831}  />
+            <AppWidgetSummary title="Total Number of Senior Technical Staffs" number={1352831}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Distance Learning Centre" number={1723315}  />
+            <AppWidgetSummary title="Total Number of Senior Secretariat Staff" number={1723315}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Affiliated Institutions" number={234}  />
+            <AppWidgetSummary title="Total Number of Junior Staffs in UI" number={234}  />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -214,6 +214,7 @@ export default function CategoriesPage() {
             />
           </Grid>
         </Grid>
+        
       </Container>
     </>
   );

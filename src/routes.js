@@ -15,7 +15,8 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ReportingPage from './pages/ReportingPage';
 import SettingsPage from './pages/SettingsPage';
-import StudentProfile from './pages/StudentProfile';
+import StudentPage from './pages/StudentProfile';
+import StaffPage from './pages/StaffProfile';
 
 // import { components } from 'react-select';
 // import StaffProfile from './pages/StaffProfile';
@@ -107,7 +108,8 @@ export default function Router() {
         // { path: 'category', element: <CategoriesPage /> },
         { path: 'reporting', element: <ReportingPage /> },
         { path: 'settings', element: <SettingsPage /> },
-        { path: 'category/student', element: <StudentProfile /> },
+        { path: 'category/student', element: <StudentPage /> },
+        { path: 'category/staff', element: <StaffPage /> },
         // { path: 'staff', element: <StaffProfile /> }
         // { path: 'blog', element: <BlogPage /> },
       ],

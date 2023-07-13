@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 // @mui
 import { Box, List, ListItemText } from '@mui/material';
 //
@@ -15,6 +15,7 @@ NavSection.propTypes = {
 
 export default function NavSection({ data = [], ...other }) {
   const [openDropdown, setOpenDropdown] = useState(false);
+  const location = useLocation()
 
   // const handleDropdownToggle = () => {
   //   setOpenDropdown(!openDropdown);
@@ -23,11 +24,20 @@ export default function NavSection({ data = [], ...other }) {
   // const handleDropdownClose = () => {
   //   setOpenDropdown(false);
   // };
+
+  // const roles = {
+  //   superrole: 'superrole',
+  //   principal: 'principal',
+  //   director: 'director',
+  //   deans: 'deans',
+  //   hod: 'hod',
+  // };
+
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
         {data.map((item) => {
-          if (item.title === 'category') {
+          if (item.title === 'category')  {
             return (
               <>
                <NavItem key={item.title} item={item} clicked={()=> setOpenDropdown(!openDropdown)}/>
@@ -38,6 +48,10 @@ export default function NavSection({ data = [], ...other }) {
             
             
             return <NavItem key={item.title} item={item} />;
+
+          //   <>
+          //  {item.title ==='user' && roles.superrole !== 'deans' ?null : <NavItem key={item.title} item={item} />} 
+          //   </>;
           
 
       

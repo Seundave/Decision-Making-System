@@ -45,8 +45,8 @@ const navConfig = [
     //   { path: '/subpage3', title: 'Subpage 3' },
     // ],
     dropdownItems: [
-      { path: '/category/student', title: 'Student', icon: icon('ic_lock')},
-      { path: '/category/staff', title: 'Staff', icon: icon('ic_lock') },
+      { path: '/dashboard/category/student', title: 'Student', icon: icon('ic_student')},
+      { path: '/dashboard/category/staff', title: 'Staff', icon: icon('ic_lock') },
     ],
   },
   {
