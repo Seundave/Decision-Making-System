@@ -3,13 +3,18 @@
   opacity: 0.8;
   content: '';
   z-index: -1;
-  background-color: red;
+  background-color: rgba(255, 255, 255, 0.829);
   position: fixed;
   top: 0px;
   left: 0;
 
   width: 100vw;
   height: 100vh;
+}
+.select-form {
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #b2b5b8c7;
 }
 
 .user-popup {
@@ -82,8 +87,10 @@
   margin-bottom: 20px;
 }
 
-.role-group {
+.role-group,
+.form-group {
   width: 100%;
+  margin: 15px 0;
   /* display: flex; */
   /* flex-direction: row; */
   /* justify-content: center; */

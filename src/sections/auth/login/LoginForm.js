@@ -62,14 +62,14 @@ export default function LoginForm() {
 
   const handleClick = async (data) => {
     // const user = users.find(user => user.email === data.email);
-    const user = await axios.post(`http://localhost:5000/api/student/signin`, {
+    const user = await axios.post(`https://items-7vpt.onrender.com/api/student/signin`, {
       email: data.email,
       password: data.password,
     });
     console.log({ user });
     if (!user.data.status) {
       // alert('User not found.');
-      toast.error('User not found');
+      toast.error('Incorrect email address/password');
       return;
     }
     if (user.data.status) {
