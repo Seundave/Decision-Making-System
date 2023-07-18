@@ -35,7 +35,7 @@ function ChartsComponent() {
   const [count, setCount] = useState(0);
   const retrieveData = async (columns, tableName) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/student/get/table', {
+      const response = await axios.get('https://items-7vpt.onrender.com/api/student/get/table', {
         params: {
           tableName,
           columns,
