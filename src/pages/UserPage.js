@@ -389,7 +389,7 @@ export default function UserPage() {
                       required
                     >
                       {Object.keys(roles).map((role) => {
-                        return <option value={roles[role]}>{roles[role]}</option>;
+                        return <option key={roles[role]} value={roles[role]}>{roles[role]}</option>;
                       })}
                     </select>
                   </div>
