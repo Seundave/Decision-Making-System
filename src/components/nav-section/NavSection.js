@@ -35,12 +35,12 @@ export default function NavSection({ data = [], ...other }) {
 
   return (
     <Box {...other}>
-      <List disablePadding sx={{ p: 1 }}>
+      <List disablePadding sx={{ p: 1}}>
         {data.map((item) => {
           if (item.title === 'category')  {
             return (
               <>
-               <NavItem key={item.title} item={item} clicked={()=> setOpenDropdown(!openDropdown)}/>
+               <NavItem sx={{"&.css-v475nq-MuiButtonBase-root-MuiListItemButton-root.active":{backgroundColor:"none"}}} key={item.title} item={item} clicked={()=> setOpenDropdown(!openDropdown)}/>
                 { openDropdown && item.dropdownItems.map( el => <NavItem key={el.title} item={el} />)}
   
               </>);

@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
+import { Grid, Container, Typography, Select, MenuItem, Paper } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 // sections
@@ -210,10 +210,238 @@ export default function StudentPage() {
                 { id: '3', label: 'Stakeholder Meeting' },
                 { id: '4', label: 'Scoping & Estimations' },
                 { id: '5', label: 'Sprint Showcase' },
+                { id: '6', label: 'Stakeholder Meeting' },
               ]}
             />
           </Grid>
         </Grid>
+
+        {/* Start of staff details */}
+        <Paper elevation={4} sx={{backgroundColor:"white", padding:"40px", marginTop:"30px", borderRadius:"10px"}}>
+          {/* Academic staff */}
+          <Typography variant='h5' sx={{margin:"10px 0px"}}>Student Statistics</Typography>
+          {/* <Typography variant='h6' sx={{margin:"10px 0px"}}>Total Student Enrolment</Typography> */}
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Academic:</div> */}
+                <input type="text" value="Total Student Enrolment" readOnly />
+                {/* <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Academic</MenuItem>
+                  <MenuItem value="option1">Option 1</MenuItem>
+                  <MenuItem value="option2">Option 2</MenuItem>
+                  <MenuItem value="option3">Option 3</MenuItem>
+              </Select> */}
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+            <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+              <MenuItem value="placeholder">Year</MenuItem>
+              <MenuItem value="option1">2015/2016</MenuItem>
+              <MenuItem value="option2">2016/2017</MenuItem>
+              <MenuItem value="option3">2017/2018</MenuItem>
+              <MenuItem value="option3">2018/2019</MenuItem>
+              <MenuItem value="option3">2020/2021</MenuItem>
+            </Select>
+                {/* <div className="profile-label">Year:</div>
+                <input type="text" value="" readOnly /> */}
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Value:</div> */}
+                <input type="text" value="Value" readOnly />
+            </Grid>
+          </Grid>
+          <Typography variant='body1' sx={{margin:"10px 0px"}}>By Gender</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4} className="grid-input">
+            <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+              <MenuItem value="placeholder">Gender</MenuItem>
+              <MenuItem value="option1">Male</MenuItem>
+              <MenuItem value="option2">Female</MenuItem>
+            </Select>
+                {/* <div className="profile-label">Gender:</div>
+                <input type="text" value="" readOnly /> */}
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Year:</div>
+                <input type="text" value="" readOnly /> */}
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Year</MenuItem>
+                  <MenuItem value="option1">2015/2016</MenuItem>
+                  <MenuItem value="option2">2016/2017</MenuItem>
+                  <MenuItem value="option3">2017/2018</MenuItem>
+                  <MenuItem value="option3">2018/2019</MenuItem>
+                  <MenuItem value="option3">2020/2021</MenuItem>
+                    </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Value:</div> */}
+                <input type="text" value="Value" readOnly />
+            </Grid>
+          </Grid>
+          <Typography variant='body1' sx={{margin:"10px 0px"}}>By Faculty</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Faculty:</div>
+                <input type="text" value="" readOnly /> */}
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+              <MenuItem value="placeholder">Faculty</MenuItem>
+              <MenuItem value="option1">Agricultural & Forestry</MenuItem>
+              <MenuItem value="option2">Arts</MenuItem>
+              <MenuItem value="option3">Public Health</MenuItem>
+              <MenuItem value="option3">Science</MenuItem>
+              <MenuItem value="option3">The Social Sciences</MenuItem>
+              <MenuItem value="option3">Technology</MenuItem>
+              <MenuItem value="option3">Vertinary Medicine</MenuItem>
+              <MenuItem value="option3">Law</MenuItem>
+            </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Year:</div>
+                <input type="text" value="" readOnly /> */}
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Year</MenuItem>
+                  <MenuItem value="option1">2015/2016</MenuItem>
+                  <MenuItem value="option2">2016/2017</MenuItem>
+                  <MenuItem value="option3">2017/2018</MenuItem>
+                  <MenuItem value="option3">2018/2019</MenuItem>
+                  <MenuItem value="option3">2020/2021</MenuItem>
+                    </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                {/* <div className="profile-label">Value:</div> */}
+                <input type="text" value="Value" readOnly />
+            </Grid>
+            
+          </Grid>
+          <Typography variant='body1' sx={{margin:"10px 0px"}}>By Level of Programme</Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={4} className="grid-input">
+              <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                <MenuItem value="placeholder">Level of Programme</MenuItem>
+                <MenuItem value="option1">Postgraduate (Full-Time)</MenuItem>
+                <MenuItem value="option2">Undergraduate (Full-Time)</MenuItem>
+                <MenuItem value="option2">Postgraduate (Part-Time)</MenuItem>
+                <MenuItem value="option2">Distance Learning Centre</MenuItem>
+                <MenuItem value="option2">Affliated Institutions</MenuItem>
+              </Select>
+                  {/* <div className="profile-label">Gender:</div>
+                  <input type="text" value="" readOnly /> */}
+              </Grid>
+              <Grid item xs={12} sm={4} className="grid-input">
+                  {/* <div className="profile-label">Year:</div>
+                  <input type="text" value="" readOnly /> */}
+                  <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                    <MenuItem value="placeholder">Year</MenuItem>
+                    <MenuItem value="option1">2015/2016</MenuItem>
+                    <MenuItem value="option2">2016/2017</MenuItem>
+                    <MenuItem value="option3">2017/2018</MenuItem>
+                    <MenuItem value="option3">2018/2019</MenuItem>
+                    <MenuItem value="option3">2020/2021</MenuItem>
+                      </Select>
+              </Grid>
+              <Grid item xs={12} sm={4} className="grid-input">
+                  {/* <div className="profile-label">Value:</div> */}
+                  <input type="text" value="Value" readOnly />
+              </Grid>
+            </Grid>
+            <Typography variant='body1' sx={{margin:"10px 0px"}}>New Entrants</Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={4} className="grid-input">
+              <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                <MenuItem value="placeholder">New Entrants</MenuItem>
+                <MenuItem value="option1">New Postgraduate (PG)</MenuItem>
+                <MenuItem value="option2">New Undergraduate (UG)</MenuItem>
+              </Select>
+                  {/* <div className="profile-label">Gender:</div>
+                  <input type="text" value="" readOnly /> */}
+              </Grid>
+              <Grid item xs={12} sm={4} className="grid-input">
+                  {/* <div className="profile-label">Year:</div>
+                  <input type="text" value="" readOnly /> */}
+                  <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                    <MenuItem value="placeholder">Year</MenuItem>
+                    <MenuItem value="option1">2015/2016</MenuItem>
+                    <MenuItem value="option2">2016/2017</MenuItem>
+                    <MenuItem value="option3">2017/2018</MenuItem>
+                    <MenuItem value="option3">2018/2019</MenuItem>
+                    <MenuItem value="option3">2020/2021</MenuItem>
+                      </Select>
+              </Grid>
+              <Grid item xs={12} sm={4} className="grid-input">
+                  {/* <div className="profile-label">Value:</div> */}
+                  <input type="text" value="Value" readOnly />
+              </Grid>
+            </Grid>
+          
+          {/* End of academic staff */}
+          {/* Start of non-academic staff */}
+          {/* <Typography variant='h6' sx={{margin:"10px 0px"}}>Total Staff (Non-Academic)</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <input type="text" value="Non-Academic" readOnly />
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Year</MenuItem>
+                  <MenuItem value="option1">2015/2016</MenuItem>
+                  <MenuItem value="option2">2016/2017</MenuItem>
+                  <MenuItem value="option3">2017/2018</MenuItem>
+                  <MenuItem value="option3">2018/2019</MenuItem>
+                  <MenuItem value="option3">2020/2021</MenuItem>
+                    </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <input type="text" value="Value" readOnly />
+            </Grid>
+          </Grid>
+          <Typography variant='body1' sx={{margin:"10px 0px"}}>By Gender</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Gender</MenuItem>
+                  <MenuItem value="option1">Male</MenuItem>
+                  <MenuItem value="option2">Female</MenuItem>
+                </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Year</MenuItem>
+                  <MenuItem value="option1">2015/2016</MenuItem>
+                  <MenuItem value="option2">2016/2017</MenuItem>
+                  <MenuItem value="option3">2017/2018</MenuItem>
+                  <MenuItem value="option3">2018/2019</MenuItem>
+                  <MenuItem value="option3">2020/2021</MenuItem>
+                    </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <input type="text" value="Value" readOnly />
+            </Grid>
+          </Grid>
+          <Typography variant='body1' sx={{margin:"10px 0px"}}>By Category</Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Category</MenuItem>
+                  <MenuItem value="option1">Senior Technical Staff</MenuItem>
+                  <MenuItem value="option2">Senior Administrative Staff</MenuItem>
+                  <MenuItem value="option3">Senior Secretariat Staff</MenuItem>
+                  <MenuItem value="option3">Junior Staff</MenuItem>
+                </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <Select defaultValue="placeholder" fullWidth sx={{height:"40px"}}>
+                  <MenuItem value="placeholder">Year</MenuItem>
+                  <MenuItem value="option1">2015/2016</MenuItem>
+                  <MenuItem value="option2">2016/2017</MenuItem>
+                  <MenuItem value="option3">2017/2018</MenuItem>
+                  <MenuItem value="option3">2018/2019</MenuItem>
+                  <MenuItem value="option3">2020/2021</MenuItem>
+                </Select>
+            </Grid>
+            <Grid item xs={12} sm={4} className="grid-input">
+                <input type="text" value="Value" readOnly />
+            </Grid>
+          </Grid> */}
+        </Paper>
       </Container>
     </>
   );
