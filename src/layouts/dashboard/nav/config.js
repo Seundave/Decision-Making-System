@@ -10,13 +10,15 @@ const navConfig = [
     title: 'dashboard',
     path: '/dashboard/app',
     icon: icon('ic_analytics'),
-    dropdown:false
+    dropdown:false,
+    access: ['government','director','VC'],
   },
   {
     title: 'user',
     path: '/dashboard/user',
     icon: icon('ic_user'),
-    dropdown:false
+    dropdown:false,
+    access: ['director','VC'],
   },
   // {
   //   title: 'product',
@@ -48,24 +50,29 @@ const navConfig = [
       { path: '/dashboard/category/student', title: 'Student', icon: icon('ic_student')},
       { path: '/dashboard/category/staff', title: 'Staff', icon: icon('ic_lock') },
     ],
+    access: ['director','VC'],
   },
   {
     title: 'reporting',
     path: '/dashboard/reporting',
     icon: icon('ic_report'),
-    dropdown:false
+    dropdown:false,
+    access: ['government','director','VC'],
+
   },
   {
     title: 'settings',
     path: '/dashboard/settings',
     icon: icon('ic_settings'),
-    dropdown:false
+    dropdown:false,
+    access: ['director','VC'],
   },
   {
     title: 'logout',
     path: '/logout',
     icon: icon('ic_logout'),
-    dropdown:false
+    dropdown:false,
+    access: ['government','director','VC'],
   },
   // {
   //   title: 'Not found',

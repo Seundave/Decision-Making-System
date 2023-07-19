@@ -21,6 +21,7 @@ import axios from 'axios';
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {setCurrentUser} = useContext(AuthContext)
 
   const loginSchema = yup.object().shape({
     email: yup.string().email('Enter a valid email address').required('Email is required'),
@@ -60,20 +61,30 @@ export default function LoginForm() {
 
   // }
 
+  const users = [
+    { email: 'vc@gmail.com', role: 'VC', password: 'vpassword' },
+    { email: 'director@gmail.com', role: 'director', password: 'dpassword' },
+    { email: 'government@gmail.com', role: 'government', password: 'gpassword' },
+    // Add more users here as needed
+  ];
+
   const handleClick = async (data) => {
-    // const user = users.find(user => user.email === data.email);
-    const user = await axios.post(`https://items-7vpt.onrender.com/api/student/signin`, {
-      email: data.email,
-      password: data.password,
-    });
+    const user = users.find(user => user.email === data.email);
+    // const user = await axios.post(`https://items-7vpt.onrender.com/api/student/signin`, {
+    //   email: data.email,
+    //   password: data.password,
+    // });
     console.log({ user });
-    if (!user.data.status) {
+    // if (!user.data.status) {
+      if (!user.email) {
       // alert('User not found.');
       toast.error('Incorrect email address/password');
       return;
     }
-    if (user.data.status) {
-      localStorage.setItem('authToken', user.data.token);
+    // if (user.data.status) {
+      if (user) {
+      // localStorage.setItem('authToken', user.data.token);
+      setCurrentUser(user)
       navigate('/dashboard', { replace: true });
       toast.success('Login successful!', {
         position: 'top-right',
@@ -100,12 +111,7 @@ export default function LoginForm() {
     }
   };
 
-  const users = [
-    { email: 'vc@gmail.com', role: 'VC', password: 'vpassword' },
-    { email: 'director@gmail.com', role: 'director', password: 'dpassword' },
-    { email: 'government@gmail.com', role: 'government', password: 'gpassword' },
-    // Add more users here as needed
-  ];
+  
 
   return (
     <>
