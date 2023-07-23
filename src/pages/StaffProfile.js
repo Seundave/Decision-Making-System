@@ -38,11 +38,11 @@ export default function StaffPage() {
 
   function handleCategoryChange(e) {
     setData(e.target.value);
-    console.log(setData);
+    console.log(data);
   }
 
   useEffect(() => {
-    if (data.category === 'Gender' || data.category === 'Faculty') {
+    if (data.category !== '' || data.category === 'Faculty') {
       setShowGender(true);
     } else {
       setShowGender(false);
