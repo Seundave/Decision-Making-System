@@ -22,6 +22,7 @@ import {
 // ----------------------------------------------------------------------
 
 export default function StaffPage() {
+  const [staffData, setStaffData] = useState([]);
   const [showGender, setShowGender] = useState(false);
   const [data, setData] = useState({
     category: '',
@@ -32,23 +33,39 @@ export default function StaffPage() {
 
   const categories = ['Gender', 'Faculty', 'Others'];
   const Gender = ['Male', 'Female'];
+  const Faculty = ['Arts', 'Technology', 'Science', 'Music'];
   // console.log(categories[0]);
 
   // console.log(categories.gender);
 
   function handleCategoryChange(e) {
-    setData(e.target.value);
-    console.log(data);
+    setData((prev) => ({ ...prev, category: e.target.value }));
+    // setData(e.target.value);
   }
 
+  console.log(data);
+
   useEffect(() => {
-    if (data.category !== '' || data.category === 'Faculty') {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('');
+        setStaffData(response.data);
+      } catch (error) {
+        console.log('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (data.category !== 'placeholder' && data.category !== '') {
       setShowGender(true);
     } else {
       setShowGender(false);
     }
   }, [data.category]);
 
+  console.log(showGender);
   return (
     <>
       <Helmet>
@@ -61,6 +78,9 @@ export default function StaffPage() {
         </Typography>
 
         <Grid container spacing={3}>
+          {/* {staffData.map ((item) =>{
+
+          })} */}
           <Grid item xs={12} sm={6} md={3}>
             {/* <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} /> */}
             <AppWidgetSummary title="Total Number of Senior Technical Staffs" number={714000} />
@@ -263,7 +283,12 @@ export default function StaffPage() {
             Total Staff (Academic)
           </Typography>
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={4} className="grid-input">
+            <Grid
+              item
+              xs={12}
+              sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}
+              className="grid-input"
+            >
               {/* <div className="profile-label">Academic:</div> */}
               {/* <input type="text" value="Academic" readOnly /> */}
               <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }} onChange={handleCategoryChange}>
@@ -275,24 +300,45 @@ export default function StaffPage() {
                     </MenuItem>
                   );
                 })}
-                {showGender && (
-                  <Grid item xs={12} sm={4}>
-                    <Select default="placeholder" value={data.gender} fullWidth sx={{ height: '40px' }}>
-                      <MenuItem value="placeholder"> Select your gender</MenuItem>
-                      {Gender.map((items, index) => {
-                        return (
-                          <MenuItem key={index + 1} value={items}>
-                            {items}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </Grid>
-                )}
+
                 {/* <MenuItem value="option3">Option 3</MenuItem> */}
               </Select>
             </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
+            {data.category === 'Gender' && (
+              <Grid item xs={12} sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}>
+                <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
+                  <MenuItem value="placeholder"> Select your gender</MenuItem>
+                  {Gender.map((items, index) => {
+                    return (
+                      <MenuItem key={index + 1} value={items}>
+                        {items}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </Grid>
+            )}
+
+            {data.category === 'Faculty' && (
+              <Grid item xs={12} sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}>
+                <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
+                  <MenuItem value="placeholder"> Select your faculty</MenuItem>
+                  {Faculty.map((items, index) => {
+                    return (
+                      <MenuItem key={index + 1} value={items}>
+                        {items}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </Grid>
+            )}
+            <Grid
+              item
+              xs={12}
+              sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}
+              className="grid-input"
+            >
               <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
                 <MenuItem value="placeholder">Year</MenuItem>
                 <MenuItem value="option1">2015/2016</MenuItem>
@@ -302,7 +348,12 @@ export default function StaffPage() {
                 <MenuItem value="option3">2020/2021</MenuItem>
               </Select>
             </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
+            <Grid
+              item
+              xs={12}
+              sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}
+              className="grid-input"
+            >
               <input type="text" value="Value" readOnly />
             </Grid>
           </Grid>
@@ -368,13 +419,62 @@ export default function StaffPage() {
             Total Staff (Non-Academic)
           </Typography>
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Non-Academic:</div> */}
-              <input type="text" value="Non-Academic" readOnly />
+            <Grid
+              item
+              xs={12}
+              sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}
+              className="grid-input"
+            >
+              {/* <div className="profile-label">Academic:</div> */}
+              {/* <input type="text" value="Academic" readOnly /> */}
+              <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }} onChange={handleCategoryChange}>
+                <MenuItem value="placeholder">Condition</MenuItem>
+                {categories.map((item, index) => {
+                  return (
+                    <MenuItem key={index + 1} value={item}>
+                      {item}
+                    </MenuItem>
+                  );
+                })}
+
+                {/* <MenuItem value="option3">Option 3</MenuItem> */}
+              </Select>
             </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Year:</div>
-                <input type="text" value="" readOnly /> */}
+            {data.category === 'Gender' && (
+              <Grid item xs={12} sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}>
+                <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
+                  <MenuItem value="placeholder"> Select your gender</MenuItem>
+                  {Gender.map((items, index) => {
+                    return (
+                      <MenuItem key={index + 1} value={items}>
+                        {items}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </Grid>
+            )}
+
+            {data.category === 'Faculty' && (
+              <Grid item xs={12} sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}>
+                <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
+                  <MenuItem value="placeholder"> Select your faculty</MenuItem>
+                  {Faculty.map((items, index) => {
+                    return (
+                      <MenuItem key={index + 1} value={items}>
+                        {items}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </Grid>
+            )}
+            <Grid
+              item
+              xs={12}
+              sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}
+              className="grid-input"
+            >
               <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
                 <MenuItem value="placeholder">Year</MenuItem>
                 <MenuItem value="option1">2015/2016</MenuItem>
@@ -384,70 +484,12 @@ export default function StaffPage() {
                 <MenuItem value="option3">2020/2021</MenuItem>
               </Select>
             </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Value:</div> */}
-              <input type="text" value="Value" readOnly />
-            </Grid>
-          </Grid>
-          <Typography variant="body1" sx={{ margin: '10px 0px' }}>
-            By Gender
-          </Typography>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Gender:</div>
-                <input type="text" value="" readOnly /> */}
-              <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
-                <MenuItem value="placeholder">Gender</MenuItem>
-                <MenuItem value="option1">Male</MenuItem>
-                <MenuItem value="option2">Female</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Year:</div>
-                <input type="text" value="" readOnly /> */}
-              <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
-                <MenuItem value="placeholder">Year</MenuItem>
-                <MenuItem value="option1">2015/2016</MenuItem>
-                <MenuItem value="option2">2016/2017</MenuItem>
-                <MenuItem value="option3">2017/2018</MenuItem>
-                <MenuItem value="option3">2018/2019</MenuItem>
-                <MenuItem value="option3">2020/2021</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Value:</div> */}
-              <input type="text" value="Value" readOnly />
-            </Grid>
-          </Grid>
-          <Typography variant="body1" sx={{ margin: '10px 0px' }}>
-            By Category
-          </Typography>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Category:</div>
-                <input type="text" value="" readOnly /> */}
-              <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
-                <MenuItem value="placeholder">Category</MenuItem>
-                <MenuItem value="option1">Senior Technical Staff</MenuItem>
-                <MenuItem value="option2">Senior Administrative Staff</MenuItem>
-                <MenuItem value="option3">Senior Secretariat Staff</MenuItem>
-                <MenuItem value="option3">Junior Staff</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Year:</div>
-                <input type="text" value="" readOnly /> */}
-              <Select defaultValue="placeholder" fullWidth sx={{ height: '40px' }}>
-                <MenuItem value="placeholder">Year</MenuItem>
-                <MenuItem value="option1">2015/2016</MenuItem>
-                <MenuItem value="option2">2016/2017</MenuItem>
-                <MenuItem value="option3">2017/2018</MenuItem>
-                <MenuItem value="option3">2018/2019</MenuItem>
-                <MenuItem value="option3">2020/2021</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={4} className="grid-input">
-              {/* <div className="profile-label">Value:</div> */}
+            <Grid
+              item
+              xs={12}
+              sm={data.category !== 'placeholder' && data.category !== '' ? 3 : 4}
+              className="grid-input"
+            >
               <input type="text" value="Value" readOnly />
             </Grid>
           </Grid>
