@@ -23,7 +23,7 @@ import StaffPage from './pages/StaffProfile';
 
 // ----------------------------------------------------------------------
 
-export const AuthContext = createContext();
+ const AuthContext = createContext();
 export const userContext = createContext(null);
 
 export default function Router() {
@@ -150,9 +150,10 @@ export default function Router() {
   ]);
 
   return (
-    <AuthContext.Provider value={{ loginError, currentUser, setLoginError, handleLogin }}>
+    <AuthContext.Provider value={{ loginError, currentUser, setCurrentUser, setLoginError, handleLogin, users }}>
       {routes}
     </AuthContext.Provider>
   );
 }
 
+export {AuthContext}
