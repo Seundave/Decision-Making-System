@@ -75,6 +75,12 @@ export default function Router() {
     }
   };
 
+  const logout = ()=>{
+    localStorage.clear()
+    sessionStorage.clear()
+    navigate('/login')
+}
+
 //   if (user) {
 //     if (user.password === password) {
 //       setCurrentUser(user);
@@ -123,7 +129,7 @@ export default function Router() {
     },
     {
       path: 'logout',
-      element: <LogOut />,
+      element: <LogOut onClick={logout}/>,
     },
     {
       path: 'category',

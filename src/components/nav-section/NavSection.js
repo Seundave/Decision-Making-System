@@ -57,19 +57,31 @@ export default function NavSection({ data = [], ...other }) {
 
   return (
     <Box {...other}>
-      <List disablePadding sx={{ p: 1 }}>
+      <List disablePadding sx={{ p: 1}}>
         {data.map((item) => {
-          switch (currentUser?.role) {
-            case 'government':
-              return item?.access?.includes(currentUser?.role) && <Navitems item={item} />;
-            case 'director':
-              return item?.access?.includes(currentUser?.role) && <Navitems item={item} />;
-            case 'VC':
-              return item?.access?.includes(currentUser?.role) && <Navitems item={item} />;
 
-            default:
-              return;
-          }
+          if (item.title === 'category')  {
+            return (
+              <>
+               <NavItem sx={{"&.css-v475nq-MuiButtonBase-root-MuiListItemButton-root.active":{backgroundColor:"none"}}} key={item.title} item={item} clicked={()=> setOpenDropdown(!openDropdown)}/>
+                { openDropdown && item.dropdownItems.map( el => <NavItem key={el.title} item={el} />)}
+  
+              </>);
+          } 
+            
+            
+            return <NavItem key={item.title} item={item} />;
+
+          //   <>
+          //  {item.title ==='user' && roles.superrole !== 'deans' ?null : <NavItem key={item.title} item={item} />} 
+          //   </>;
+          
+
+      
+        })
+        }
+
+          
 
           //  if (item.title === 'category')  {
           //   return (
@@ -89,6 +101,7 @@ export default function NavSection({ data = [], ...other }) {
           //   <NavItem key={item.title} item={item} />
           // )}
         })}
+
       </List>
     </Box>
   );
