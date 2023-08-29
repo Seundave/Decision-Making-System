@@ -17,11 +17,75 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+  const [summaryData, setSummaryData] = useState({
+    graduated: 0,
+    students: 0,
+    dlc: 0,
+    pg: 0,
+    undergraduate: 0,
+  });
+  const [otherData, setOtherData] = useState({
+    chemistry: 0,
+    physics: 0,
+    biology: 0,
+    mathematics: 0,
+    english: 0,
+  });
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/student/get/summaryData'); // Replace with your API endpoint
+
+      if (response.status === 200) {
+        const jsonData = await response.json();
+        console.log({ jsonData }); // Check the structure of jsonData
+
+        // Assuming jsonData.results has the structure you mentioned
+        setSummaryData({
+          students: jsonData.results.students.length,
+          graduated: jsonData.results.graduated.length,
+          dlc: jsonData.results.dlc.length,
+          pg: jsonData.results.pg.length,
+          undergraduate: jsonData.results.undergraduate.length,
+        });
+      } else {
+        throw new Error('Request failed');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const fetchInfo = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/student/students'); // Replace with your API endpoint
+      console.log({ response });
+      if (response.status === 200) {
+        const jsonData = await response.json();
+        console.log(jsonData.studentDeparment);
+        const result = Object.entries(jsonData.studentDeparment).map(([departmentName, departmentInfo]) => {
+          return { label: departmentName, value: departmentInfo.students.length };
+        });
+
+        console.log(result);
+        // setSummaryData(jsonData.studentDeparment);
+        setOtherData(result);
+      } else {
+        throw new Error('Request failed');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchInfo();
+  }, []);
 
   return (
     <>
@@ -36,23 +100,22 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            {/* <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} /> */}
-            <AppWidgetSummary title="Total Number of Graduates" number={714000} />
+            <AppWidgetSummary title="Total Number of students" number={summaryData.students ?? 6} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Student Enrolment" number={1352831} />
+            <AppWidgetSummary title="Total Number of Graduates" number={summaryData.graduated ?? 1} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Staff" number={1723315} />
+            <AppWidgetSummary title="Total Number of undergraduates" number={summaryData.undergraduate ?? 1} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Staff Enrolment" number={234} />
+            <AppWidgetSummary title="Total Number of Postgraduates" number={summaryData.pg ?? 1} />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Website Visits"
               subheader="(+43%) than last year"
@@ -90,16 +153,16 @@ export default function DashboardAppPage() {
                 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="ALl Students"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Post Graduates', value: summaryData.pg },
+                { label: 'Distanc learning centre', value: summaryData.dlc },
+                { label: 'Graduate', value: summaryData.graduated },
+                { label: 'Under Graduate', value: summaryData.undergraduate },
               ]}
               chartColors={[
                 theme.palette.primary.main,
@@ -112,23 +175,12 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
-              title="Conversion Rates"
+              title="Students per Department"
               subheader="(+43%) than last year"
-              chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
-              ]}
+              chartData={otherData}
             />
           </Grid>
-
+          {/* 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
@@ -140,40 +192,9 @@ export default function DashboardAppPage() {
               ]}
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppNewsUpdate
-              title="News Update"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: faker.name.jobTitle(),
-                description: faker.name.jobTitle(),
-                image: `/assets/images/covers/cover_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
-              }))}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline
-              title="Order Timeline"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  '1983, orders, $4220',
-                  '12 Invoices have been paid',
-                  'Order #37745 from September',
-                  'New order placed #XF-2356',
-                  'New order placed #XF-2346',
-                ][index],
-                type: `order${index + 1}`,
-                time: faker.date.past(),
-              }))}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppTrafficBySite
               title="Traffic by Site"
               list={[
@@ -212,7 +233,7 @@ export default function DashboardAppPage() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Chart from 'react-apexcharts';
 // import ChartComponent from "./pages/ChartComponet";
 import axios from 'axios';
+import { urls } from './dashboard/nav/config';
 // import ChartComponent from "./pages/ChartComponet";
 
 function ChartsComponent() {
@@ -35,7 +36,7 @@ function ChartsComponent() {
   const [count, setCount] = useState(0);
   const retrieveData = async (columns, tableName) => {
     try {
-      const response = await axios.get('https://items-7vpt.onrender.com/api/student/get/table', {
+      const response = await axios.get(`${urls}/api/student/get/table`, {
         params: {
           tableName,
           columns,

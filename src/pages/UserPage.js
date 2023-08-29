@@ -33,6 +33,7 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import axios from 'axios';
+import { urls } from 'src/layouts/dashboard/nav/config';
 
 // ----------------------------------------------------------------------
 
@@ -95,7 +96,7 @@ export default function UserPage() {
 
   const getUserList = async () => {
     const authToken = localStorage.getItem('authToken');
-    const response = await axios.get(`https://items-7vpt.onrender.com/api/student/users`, {
+    const response = await axios.get(`${urls}/api/student/users`, {
       headers: {
         authorization: `Bearer ${authToken}`,
       },
@@ -126,7 +127,7 @@ export default function UserPage() {
     const authToken = localStorage.getItem('authToken');
     setOpen(null);
     const response = await axios.delete(
-      `https://items-7vpt.onrender.com/api/student/delete/user`,
+      `${urls}/api/student/delete/user`,
       { data: { email: selectedSecond.email } },
       {
         headers: {
@@ -200,7 +201,7 @@ export default function UserPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await axios.post(`https://items-7vpt.onrender.com/api/student/create/admin`, formData);
+    const response = await axios.post(`${urls}/api/student/create/admin`, formData);
     setUSERLIST(response.data.user);
     if (response.data.status) {
       toast.success('User created successful!');

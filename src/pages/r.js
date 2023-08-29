@@ -24,6 +24,7 @@ import { MenuProps, useStyles, options as optionsData } from './utils';
 import POSTS from '../_mock/blog';
 // import { Charts } from '../layouts/charts/Charts';
 import ChartComponent from './ChartComponent';
+import { urls } from 'src/layouts/dashboard/nav/config';
 
 // ----------------------------------------------------------------------
 
@@ -64,7 +65,7 @@ export default function BlogPage() {
   const retrieveData = async (queryData) => {
     console.log({ queryData });
     try {
-      const response = await axios.get('https://items-7vpt.onrender.com/api/student/get/table', {
+      const response = await axios.get(`${urls}/api/student/get/table`, {
         params: {
           // tableName,
           // columns,
