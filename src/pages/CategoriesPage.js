@@ -20,7 +20,7 @@ import {
 
 // ----------------------------------------------------------------------
 
-export default function CategoriesPage() {
+export default function CategoriesPage({path}) {
   const theme = useTheme();
 
   return (
@@ -31,9 +31,8 @@ export default function CategoriesPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Student's Page
+          Staff Page
         </Typography>
-
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
             {/* <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} /> */}

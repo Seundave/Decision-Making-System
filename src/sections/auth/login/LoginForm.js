@@ -8,7 +8,7 @@ import { LoadingButton } from '@mui/lab';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { AuthContext } from '../../../routes';
+import { AuthContext, useAuthContext } from '../../../routes';
 // import {userContext} from "../../../routes"
 // import { userContext } from 'src/routes';
 // import userContext from 'routes.js'
@@ -22,6 +22,7 @@ import { urls } from 'src/layouts/dashboard/nav/config';
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setCurrentUser, currentUser } = useAuthContext();
 
   const loginSchema = yup.object().shape({
     email: yup.string().email('Enter a valid email address').required('Email is required'),
@@ -35,49 +36,22 @@ export default function LoginForm() {
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
+  console.log({ setCurrentUser, currentUser });
 
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const { loginError } = useContext(AuthContext);
-
-  // const handleSubmit = e => {
-  //   e.preventDefault();
-  //   handleLogin(email, password);
-
-  // };
-
-  //   const notify = () =>{
-  //     toast.success('Message sent', {
-  //         position: "top-right",
-  //         autoClose: 5000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: true,
-  //         draggable: true,
-  //         progress: undefined,
-  //     });
-
-  // }
-
-  console.log();
   const handleClick = async (data) => {
     console.log({ data, urls });
-    // const user = users.find(user => user.email === data.email);
     const user = await axios.post(`${urls}/api/student/signin`, {
       email: data.email,
       password: data.password,
     });
     console.log({ user });
-    if (!user.data.status) {
-      // alert('User not found.');
-      toast.error('Incorrect email address/password');
-      return;
-    }
-    if (user.data.status) {
-      localStorage.setItem('authToken', user.data.token);
-      navigate('/dashboard', { replace: true });
+
+    if (user.status === 200) {
+      localStorage.setItem('userDetails', JSON.stringify(user.data));
       toast.success('Login successful!', {
         position: 'top-right',
         autoClose: 5000,
@@ -87,9 +61,10 @@ export default function LoginForm() {
         draggable: true,
         progress: undefined,
       });
+      navigate('/dashboard', { replace: true });
     } else {
       // setLoginError('Invalid password.');
-      toast.error('Invalid password', {
+      toast.error('Invalid password/ username', {
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -98,17 +73,8 @@ export default function LoginForm() {
         draggable: true,
         progress: undefined,
       });
-      // toast.error('Invalid password');
-      // alert(' Invalid password')
     }
   };
-
-  const users = [
-    { email: 'vc@gmail.com', role: 'VC', password: 'vpassword' },
-    { email: 'director@gmail.com', role: 'director', password: 'dpassword' },
-    { email: 'government@gmail.com', role: 'government', password: 'gpassword' },
-    // Add more users here as needed
-  ];
 
   return (
     <>
@@ -149,7 +115,7 @@ export default function LoginForm() {
           </Link>
         </Stack>
 
-        {loginError && <p>{loginError}</p>}
+        {/* {loginError && <p>{loginError}</p>} */}
 
         <LoadingButton type="submit" fullWidth size="large" variant="contained">
           Login

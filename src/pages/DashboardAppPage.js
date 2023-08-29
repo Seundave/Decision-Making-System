@@ -17,12 +17,15 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext, useAuthContext } from 'src/routes';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+  // const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAuthContext();
   const [summaryData, setSummaryData] = useState({
     graduated: 0,
     students: 0,
@@ -30,13 +33,13 @@ export default function DashboardAppPage() {
     pg: 0,
     undergraduate: 0,
   });
-  const [otherData, setOtherData] = useState({
-    chemistry: 0,
-    physics: 0,
-    biology: 0,
-    mathematics: 0,
-    english: 0,
-  });
+  const [otherData, setOtherData] = useState([
+    { label: 'Graduated', value: 0 },
+    { label: 'Undergraduate', value: 0 },
+    { label: 'PG', value: 0 },
+    { label: 'DLC', value: 0 },
+  ]);
+  const [user, setUser] = useState({});
   const fetchData = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/student/get/summaryData'); // Replace with your API endpoint
@@ -85,7 +88,13 @@ export default function DashboardAppPage() {
   useEffect(() => {
     fetchData();
     fetchInfo();
+    const data = localStorage.getItem('userDetails');
+
+    if (data) {
+      setUser(JSON.parse(data));
+    }
   }, []);
+  console.log({ currentUser });
 
   return (
     <>
@@ -95,7 +104,7 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Hi {user?.name}, Welcome back
         </Typography>
 
         <Grid container spacing={3}>
@@ -159,10 +168,10 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="ALl Students"
               chartData={[
-                { label: 'Post Graduates', value: summaryData.pg },
-                { label: 'Distanc learning centre', value: summaryData.dlc },
-                { label: 'Graduate', value: summaryData.graduated },
-                { label: 'Under Graduate', value: summaryData.undergraduate },
+                { label: 'Post Graduates', value: summaryData.pg ?? 3 },
+                { label: 'Distanc learning centre', value: summaryData.dlc ?? 4 },
+                { label: 'Graduate', value: summaryData.graduated ?? 4 },
+                { label: 'Under Graduate', value: summaryData.undergraduate ?? 3 },
               ]}
               chartColors={[
                 theme.palette.primary.main,

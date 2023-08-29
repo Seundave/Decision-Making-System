@@ -22,8 +22,6 @@ const StyledIcon = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-
-
 // export default function AppWidgetSummary({ title, total, icon, color = 'primary', sx, ...other }) {
 //   return (
 //     <Card
@@ -59,28 +57,31 @@ const StyledIcon = styled('div')(({ theme }) => ({
 //   );
 // }
 
+const AppWidgetSummary = ({ title, number }) => {
+  return (
+    <Card
+      sx={{
+        py: 5,
+        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+        // color: (theme) => theme.palette[color].darker,
+        // bgcolor: (theme) => theme.palette[color].lighter,
+        // ...sx,
+      }}
+      // {...other}
+    >
+      <Typography style={{ fontWeight: 800 }} variant="body">
+        {title}
+      </Typography>
 
-const AppWidgetSummary = ({title,number}) => {
-  return <Card
-        sx={{
-          py: 5,
-          boxShadow: 0,
-          textAlign: 'center',
-          // color: (theme) => theme.palette[color].darker,
-          // bgcolor: (theme) => theme.palette[color].lighter,
-          // ...sx,
-        }}
-        // {...other}
-      >
-        <Typography style={{fontWeight: 800}} variant="body">{title}</Typography>
+      <Typography variant="subtitle2" sx={{ opacity: 0.72 }} style={{ fontSize: '34px' }}>
+        {number}
+      </Typography>
+    </Card>
+  );
+};
 
-       <Typography variant="subtitle2" sx={{ opacity: 0.72 }} style={{fontSize:"34px"}}>
-         {number}
-       </Typography>
-      </Card>
-}
-
-export default AppWidgetSummary
+export default AppWidgetSummary;
 
 AppWidgetSummary.propTypes = {
   title: PropTypes.string.isRequired,

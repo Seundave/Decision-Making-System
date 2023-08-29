@@ -34,6 +34,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import axios from 'axios';
 import { urls } from 'src/layouts/dashboard/nav/config';
+import { useAuthContext } from 'src/routes';
 
 // ----------------------------------------------------------------------
 
@@ -78,6 +79,7 @@ function applySortFilter(array, comparator, query) {
 
 export default function UserPage() {
   const [showPopup, setShowPopup] = useState(false);
+  const [user, setUser] = useState({});
   const [formData, setFormData] = useState({
     name: '',
     department: '',
@@ -91,17 +93,22 @@ export default function UserPage() {
 
   useEffect(() => {
     // setUSERLIST(userData);
+
+    const data = localStorage.getItem('userDetails');
+
+    if (data) {
+      setUser(JSON.parse(data));
+    }
     getUserList();
   }, []);
 
   const getUserList = async () => {
-    const authToken = localStorage.getItem('authToken');
+    const data = localStorage.getItem('userDetails');
     const response = await axios.get(`${urls}/api/student/users`, {
       headers: {
-        authorization: `Bearer ${authToken}`,
+        authorization: `Bearer ${JSON.parse(data).token}`,
       },
     });
-    console.log({ response });
     if (response.data.status) {
       setUSERLIST(response.data.user);
     }
@@ -123,7 +130,6 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const deleteUser = async () => {
-    console.log({ selectedSecond });
     const authToken = localStorage.getItem('authToken');
     setOpen(null);
     const response = await axios.delete(
@@ -135,6 +141,7 @@ export default function UserPage() {
         },
       }
     );
+    console.log({ response });
     if (response.data.status) {
       getUserList();
     }
@@ -165,11 +172,11 @@ export default function UserPage() {
   };
 
   const roles = {
-    superrole: 'superrole',
-    principal: 'principal',
-    director: 'director',
-    deans: 'deans',
-    hod: 'hod',
+    superrole: 'Superrole',
+    principal: 'Principal',
+    director: 'Director',
+    deans: 'Deans',
+    hod: 'HOD',
   };
 
   const handleClick = (event, name) => {
@@ -202,8 +209,20 @@ export default function UserPage() {
     event.preventDefault();
 
     const response = await axios.post(`${urls}/api/student/create/admin`, formData);
-    setUSERLIST(response.data.user);
-    if (response.data.status) {
+    console.log({ response }, 'create');
+
+    if (response.data.status === false) {
+      toast.error('Username/password already exists', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
+      setUSERLIST(response.data.user);
       toast.success('User created successful!');
       setShowPopup(false);
     }
@@ -246,11 +265,13 @@ export default function UserPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Hi, {user.name}
           </Typography>
-          <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button>
+          {user.role === 'superrole' && (
+            <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill" />}>
+              New User
+            </Button>
+          )}
         </Stack>
 
         <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
@@ -390,7 +411,11 @@ export default function UserPage() {
                       required
                     >
                       {Object.keys(roles).map((role) => {
-                        return <option value={roles[role]}>{roles[role]}</option>;
+                        return (
+                          <option key={roles[roles]} value={roles[role]}>
+                            {roles[role]}
+                          </option>
+                        );
                       })}
                     </select>
                   </div>

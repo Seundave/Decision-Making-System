@@ -11,12 +11,14 @@ const navConfig = [
     path: '/dashboard/app',
     icon: icon('ic_analytics'),
     dropdown: false,
+    access: ['government', 'director', 'VC'],
   },
   {
     title: 'user',
     path: '/dashboard/user',
     icon: icon('ic_user'),
     dropdown: false,
+    access: ['director', 'VC'],
   },
   // {
   //   title: 'product',
@@ -45,27 +47,31 @@ const navConfig = [
     //   { path: '/subpage3', title: 'Subpage 3' },
     // ],
     dropdownItems: [
-      { path: '/category/student', title: 'Student', icon: icon('ic_lock') },
-      { path: '/category/staff', title: 'Staff', icon: icon('ic_lock') },
+      { path: '/dashboard/category/student', title: 'Student', icon: icon('ic_lock') },
+      { path: '/dashboard/category/staff', title: 'Staff', icon: icon('ic_lock') },
     ],
+    access: ['director', 'VC'],
   },
   {
     title: 'reporting',
     path: '/dashboard/reporting',
     icon: icon('ic_report'),
     dropdown: false,
+    access: ['government', 'director', 'VC'],
   },
   {
     title: 'settings',
     path: '/dashboard/settings',
     icon: icon('ic_settings'),
     dropdown: false,
+    access: ['director', 'VC'],
   },
   {
     title: 'logout',
     path: '/logout',
     icon: icon('ic_logout'),
     dropdown: false,
+    access: ['government', 'director', 'VC'],
   },
   // {
   //   title: 'Not found',

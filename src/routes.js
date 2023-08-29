@@ -1,11 +1,10 @@
-import React, {createContext, useState} from 'react';
-import { Navigate, useRoutes } from 'react-router-dom';
+import React, { createContext, useContext, useState } from 'react';
+import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 // layouts
 import { Alert, Snackbar } from '@mui/material';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LogOut from './pages/LogOut';
 import LoginPage from './pages/LoginPage';
@@ -15,15 +14,21 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ReportingPage from './pages/ReportingPage';
 import SettingsPage from './pages/SettingsPage';
-import StudentProfile from './pages/StudentProfile';
+import StudentPage from './pages/StudentProfile';
+import StaffPage from './pages/StaffProfile';
+import BlogPage from './pages/r';
 
 // import { components } from 'react-select';
 // import StaffProfile from './pages/StaffProfile';
 
 // ----------------------------------------------------------------------
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 export const userContext = createContext(null);
+
+export function useAuthContext() {
+  return useContext(AuthContext);
+}
 
 export default function Router() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -34,25 +39,26 @@ export default function Router() {
     { email: 'government@gmail.com', role: 'government', password: 'gpassword' },
     // Add more users here as needed
   ];
+  const navigate = useNavigate();
 
   const handleLogin = (email, password) => {
     // Check if email or password is blank
     if (email.trim() === '' || password.trim() === '') {
       console.log('Please enter both email and password.');
-      setLoginError('Please enter both email and password.')
+      setLoginError('Please enter both email and password.');
       return;
     }
 
     // Check if email format is correct
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setLoginError('Invalid email format.')
+      setLoginError('Invalid email format.');
       console.log('Invalid email format.');
       return;
     }
 
     // Find the user with matching email
-    const user = users.find(user => user.email === email);
+    const user = users.find((user) => user.email === email);
 
     if (!user) {
       console.log('Email not found.');
@@ -65,35 +71,34 @@ export default function Router() {
       // navigate('/dashboard', { replace: true });
       setLoginError(null);
       console.log('Login successful!');
-      console.log(user)
+      console.log(user);
       return true;
     } else {
       setLoginError('Invalid password.');
-      console.log(' Invalid password')
+      console.log(' Invalid password');
       return;
     }
   };
 
-//   if (user) {
-//     if (user.password === password) {
-//       setCurrentUser(user);
-//       console.log('Login successful!');
-//     } else {
-//       console.log('Incorrect password.');
-//     }
-//   } else {
-//     console.log('Email not found.');
-//   }
-// };
+  const logout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate('/login');
+  };
 
-  
-  
-  
+  //   if (user) {
+  //     if (user.password === password) {
+  //       setCurrentUser(user);
+  //       console.log('Login successful!');
+  //     } else {
+  //       console.log('Incorrect password.');
+  //     }
+  //   } else {
+  //     console.log('Email not found.');
+  //   }
+  // };
 
- 
-
-    // To check if the provided email and passowrd match any user
-
+  // To check if the provided email and passowrd match any user
 
   const routes = useRoutes([
     {
@@ -105,9 +110,10 @@ export default function Router() {
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         // { path: 'category', element: <CategoriesPage /> },
-        { path: 'reporting', element: <ReportingPage /> },
+        { path: 'reporting', element: <BlogPage /> },
         { path: 'settings', element: <SettingsPage /> },
-        { path: 'category/student', element: <StudentProfile /> },
+        { path: 'category/student', element: <StudentPage /> },
+        { path: 'category/staff', element: <StaffPage /> },
         // { path: 'staff', element: <StaffProfile /> }
         // { path: 'blog', element: <BlogPage /> },
       ],
@@ -115,13 +121,11 @@ export default function Router() {
     {
       path: '/',
       element: <LoginPage />,
-      children:[
-        {element: <Navigate to="/" />, index: true }
-      ]
+      children: [{ element: <Navigate to="/" />, index: true }],
     },
     {
       path: 'logout',
-      element: <LogOut />,
+      element: <LogOut onClick={logout} />,
     },
     {
       path: 'category',
@@ -142,9 +146,10 @@ export default function Router() {
   ]);
 
   return (
-    <AuthContext.Provider value={{ loginError, currentUser, setLoginError, handleLogin }}>
+    <AuthContext.Provider value={{ loginError, currentUser, setCurrentUser, setLoginError, handleLogin, users }}>
       {routes}
     </AuthContext.Provider>
   );
 }
 
+export { AuthContext };

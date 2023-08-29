@@ -16,23 +16,13 @@ import FormControl from '@material-ui/core/FormControl';
 import { Select as Selected } from '@material-ui/core';
 
 // components
-import { departments, faculties, lookupTable, gender, sessions } from '../utils/utilData';
-import Iconify from '../components/iconify';
-import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
+import { lookupTable, gender, sessions, multipleSelectList } from '../utils/utilData';
 import { MenuProps, useStyles, options as optionsData } from './utils';
 // mock
 import POSTS from '../_mock/blog';
 // import { Charts } from '../layouts/charts/Charts';
 import ChartComponent from './ChartComponent';
 import { urls } from 'src/layouts/dashboard/nav/config';
-
-// ----------------------------------------------------------------------
-
-// const SORT_OPTIONS = [
-//   { value: 'latest', label: 'Latest' },
-//   { value: 'popular', label: 'Popular' },
-//   { value: 'oldest', label: 'Oldest' },
-// ];
 
 const options = [
   { value: 'studentFirstName', label: 'First name' },
@@ -44,28 +34,34 @@ const options = [
   { value: 'email', label: 'email' },
 ];
 
-// const Table = () => {
-//   Mock data for the table
-//   const tableData = [
-//     { id: 1, firstName: 'John', lastName: 'Doe', gender:'Male', faculty:'Technology' },
-//     { id: 2, firstName: 'Jane', lastName: 'Smith', gender:'Female', faculty:'Science'},
-//     { id: 3, firstName: 'Bob', lastName:'Johnson', gender:'Male', faculty:'Arts' },
-//   ];
-// }
-
-const tableData = [
-  { id: 1, firstName: 'John', lastName: 'Doe', gender: 'Male', faculty: 'Technology' },
-  { id: 2, firstName: 'Jane', lastName: 'Smith', gender: 'Female', faculty: 'Science' },
-  { id: 3, firstName: 'Bob', lastName: 'Johnson', gender: 'Male', faculty: 'Arts' },
-];
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
   const classes = useStyles();
+  useEffect(() => {
+    getNeededData();
+  }, []);
+
+  const [departments, setDepartments] = useState([]);
+  const [faculties, setFaculties] = useState([]);
+  const [states, setStates] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const getNeededData = async () => {
+    const response = await axios.get(`http://localhost:5000/api/student/query/initial`, {
+      headers: {
+        authorization: `Bearer ${JSON.parse(localStorage.getItem('userDetails')).token}`,
+      },
+    });
+    console.log({ response });
+    setFaculties(response.data.faculty);
+    setDepartments(response.data.departments);
+    setCountries(response.data.countries);
+    setStates(response.data.states);
+  };
   const retrieveData = async (queryData) => {
     console.log({ queryData });
     try {
-      const response = await axios.get(`${urls}/api/student/get/table`, {
+      const response = await axios.get(`http://localhost:5000/api/student/get/table`, {
         params: {
           // tableName,
           // columns,
@@ -81,6 +77,11 @@ export default function BlogPage() {
   };
   const handleGenerateChart = () => {
     setShowChartPopup(true);
+    // setFilteredData(filteredData);
+    // setShowPopup
+    // Perform any desired action with the filteredData
+    // console.log(filteredData);
+    // You can generate the report or perform any other operations here
   };
 
   const [showPopup, setShowPopup] = useState(false);
@@ -92,6 +93,8 @@ export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState();
   const [conditionData, setConditionData] = useState([]);
   const [showInputText, setShowInputText] = useState(false);
+  const [operator, setOperator] = useState([]);
+  const [showOperator, setSHowOperator] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -108,6 +111,7 @@ export default function BlogPage() {
 
   const handleMultipleChange = (event) => {
     const value = event.target.value;
+    console.log({ value, conditionData });
     if (value[value.length - 1] === 'all') {
       setSelected(selected.length === conditionData.length ? [] : conditionData.map((c) => c.value));
       return;
@@ -117,52 +121,58 @@ export default function BlogPage() {
 
   const handleClick = async () => {
     // setShowChartPopup(true);
-    try {
-      setLoading(true);
-      setShowPopup(true);
-      let queryData;
-      const selectedData = selectformData;
-      if (!selectedData.find((data) => data.value === formData.field) && formData.field !== '') {
-        selectedData.push({ value: formData.field });
-      }
-      console.log({ selectedData });
+    // try {
+    setLoading(true);
+    setShowPopup(true);
+    console.log({ formData });
+    let queryData;
+    const selectedData = selectformData;
+    if (!selectedData.find((data) => data.value === formData.field) && formData.field !== '') {
+      selectedData.push({ value: formData.field });
+    }
+    console.log({ selectedData, selectformData });
 
-      if (!showInputText) {
-        if (formData.condition !== '') {
-          const table = lookupTable[formData.condition].name;
-          const columns = lookupTable[formData.condition].common;
-          const seperateTable = lookupTable[formData.condition].seperateTable;
-          console.log({ table, columns });
-          const requestObject = selectedData.map((data) => `s.${data.value}`);
-          if (seperateTable) {
-            queryData = `SELECT ${requestObject.join(', ')} FROM student s JOIN ${table} d ON s.${
-              formData.condition
-            } = d.${
-              formData.condition === 'faculty' ? 'facultyID' : formData.condition
-            } WHERE d.${columns} IN (${selected.map((d) => `'${d}'`).join(', ')})`;
-            console.log({ queryData });
-          } else {
-            const requestObject = selectedData.map((data) => `${data.value}`);
-            queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${columns} = '${formData.value}'`;
-          }
+    if (!showInputText) {
+      if (formData.condition !== '') {
+        const table = lookupTable[formData.condition].name;
+        const columns = lookupTable[formData.condition].common;
+        const seperateTable = lookupTable[formData.condition].seperateTable;
+        console.log({ table, columns });
+        const requestObject = selectedData.map((data) => `s.${data.value}`);
+        console.log({ requestObject });
+
+        if (seperateTable) {
+          queryData = `SELECT ${requestObject.join(', ')} FROM student s JOIN ${table} d ON s.${
+            formData.condition
+          } = d.${formData.condition === 'faculty' ? 'facultyID' : formData.condition} WHERE d.${columns} IN (${selected
+            .map((d) => `'${d}'`)
+            .join(', ')})`;
+          console.log({ queryData });
+        } else if (formData.condition === 'gender' || formData.condition === 'currentSession') {
+          queryData = `SELECT ${requestObject.join(', ')} FROM student s WHERE ${columns} IN (${selected
+            .map((d) => `'${d}'`)
+            .join(', ')})`;
         } else {
-          const requestObject = selectedData.map((data) => data.value);
-          queryData = `SELECT  ${requestObject.join(', ')} FROM student`;
+          const requestObject = selectedData.map((data) => `${data.value}`);
+          queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${columns} = '${formData.value}'`;
         }
       } else {
         const requestObject = selectedData.map((data) => data.value);
-        queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${formData.condition} = '${formData.text}'`;
+        queryData = `SELECT  ${requestObject.join(', ')} FROM student`;
       }
-
-      let data = await retrieveData(queryData);
-      console.log({ data }, Object.keys(data));
-      setResultData(data);
-      setLoading(false);
-    } catch (e) {
-      console.log({ e });
-    } finally {
-      setLoading(false);
+    } else {
+      const requestObject = selectedData.map((data) => data.value);
+      queryData = `SELECT  ${requestObject.join(', ')} FROM student WHERE ${formData.condition} = '${formData.text}'`;
     }
+    console.log({ queryData });
+    let data = await retrieveData(queryData);
+    setResultData(data);
+    setLoading(false);
+    // } catch (e) {
+    //   console.log({ e });
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleSelectedCategory = (e) => {
@@ -185,17 +195,21 @@ export default function BlogPage() {
       gender,
       session: sessions,
     };
-    console.log(e.target.value, e.target.name);
+    console.log(e.target.value, e.target.name, faculties);
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (e.target.name === 'condition') {
       let value = e.target.value;
-      if (
-        value === 'yearOFEntryIntoUI' ||
-        value === 'studentLastSurname' ||
-        value === 'studentFirstName' ||
-        value === 'studentMiddleName'
-      ) {
+      if (value === 'studentLastSurname' || value === 'studentFirstName' || value === 'studentMiddleName') {
         setShowInputText(true);
+        setSHowOperator(false);
+      } else if (value === 'session') {
+        setSHowOperator(true);
+        setShowInputText(true);
+        setOperator([
+          { value: '=', key: 'Equal To' },
+          { value: '<', key: 'Less Than' },
+          { value: '>', key: 'Greater Than' },
+        ]);
       } else {
         setShowInputText(false);
         console.log(dataValue[e.target.value]);
@@ -221,38 +235,13 @@ export default function BlogPage() {
       </Helmet>
 
       <Container>
-        {/* <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-          <BlogPostsSearch posts={POSTS} />
-          <BlogPostsSort options={SORT_OPTIONS} />
-        </Stack>
-
-        <Grid container spacing={3}>
-          {POSTS.map((post, index) => (
-            <BlogPostCard key={post.id} post={post} index={index} />
-          ))}
-        </Grid> */}
-
-        {/* Category selection */}
-
         <div className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
           {/* <h2>Contact Form</h2> */}
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4" gutterBottom>
               Report Generation
             </Typography>
-            {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                New Post
-              </Button> */}
           </Stack>
-
-          <div className="category-selection">
-            <select id="email" name="category" value={formData.category} onChange={handleChange} required>
-              <option value="">Select category</option>
-              <option value="john@example.com">Student</option>
-              <option value="jane@example.com">Staff</option>
-              {/* <option value="mike@example.com">mike@example.com</option> */}
-            </select>
-          </div>
 
           <div onSubmit={handleSubmit}>
             <div className=" multiselect">
@@ -279,35 +268,19 @@ export default function BlogPage() {
               <label htmlFor="email">Field Conditions</label>
               <select id="condition" name="condition" value={formData.condition} onChange={handleChange} required>
                 <option value="">Select conditions</option>
-                <option value="studentFirstName">First name</option>
-                <option value="studentMiddleName">Middle name</option>
-                <option value="studentLastSurname">Last name</option>
-                <option value="yearOFEntryIntoUI">Year of Entry</option>
-                <option value="session">session</option>
-                <option value="faculty">Faculty</option>
-                <option value="departmentID">Department</option>
-                <option value="gender">Gender</option>
+                {multipleSelectList.map((c) => (
+                  <option value={c.value}>{c.label}</option>
+                ))}
               </select>
-              <select id="operator" name="operator" value={formData.operator} onChange={handleChange} required>
-                <option value="">Operator</option>
-                <option value="john@example.com">Equal to</option>
-                <option value="jane@example.com">Less than</option>
-                <option value="mike@example.com">Greater than</option>
-                <option value="mike@example.com">Not equal to</option>
-                <option value="mike@example.com">Not less than</option>
-                <option value="mike@example.com">Not greater than</option>
-              </select>
+              {showOperator && (
+                <select id="operator" name="operator" value={formData.operator} onChange={handleChange} required>
+                  <option value="">Operator</option>
+                  {operator.map((item, index) => (
+                    <option value={item.value}>{item.key}</option>
+                  ))}
+                </select>
+              )}
               {!showInputText ? (
-                // <select id="value" name="value" value={formData.value} onChange={handleChange} required>
-                //   <option value="">Enter value</option>
-                //   {conditionData.map((item, index) => {
-                //     return (
-                //       <option value={item.value} key={index}>
-                //         {item.name}
-                //       </option>
-                //     );
-                //   })}
-                // </select>
                 <FormControl className={classes.formControl}>
                   <InputLabel id="mutiple-select-label">Multiple Select</InputLabel>
                   <Selected
@@ -333,18 +306,17 @@ export default function BlogPage() {
                       </ListItemIcon>
                       <ListItemText classes={{ primary: classes.selectAllText }} primary="Select All" />
                     </MenuItem>
-                    {conditionData
-                      .map((c) => c.value)
-                      .map((option, index) => {
-                        return (
-                          <MenuItem key={index} value={option}>
-                            <ListItemIcon>
-                              <Checkbox checked={selected.indexOf(option) > -1} />
-                            </ListItemIcon>
-                            <ListItemText primary={option} />
-                          </MenuItem>
-                        );
-                      })}
+                    {conditionData.map((option, index) => {
+                      console.log(option);
+                      return (
+                        <MenuItem key={index} value={option.name}>
+                          <ListItemIcon>
+                            <Checkbox checked={selected.indexOf(option.name) > -1} />
+                          </ListItemIcon>
+                          <ListItemText primary={option.name} />
+                        </MenuItem>
+                      );
+                    })}
                   </Selected>
                 </FormControl>
               ) : (
@@ -400,17 +372,6 @@ export default function BlogPage() {
                         </thead>
                         <tbody>
                           {resultData.map((row, index) => {
-                            //  (
-                            //   <tr key={row.id}>
-                            //     <td>{row.id}</td>
-                            //     <td>
-                            //       <Link to={`/profile/${row.id}`}>{row.firstName}</Link>
-                            //     </td>
-                            //     <td>{row.lastName}</td>
-                            //     <td>{row.gender}</td>
-                            //     <td>{row.faculty}</td>
-                            //   </tr>
-                            // )
                             return (
                               <tr key={index}>
                                 {
@@ -445,7 +406,17 @@ export default function BlogPage() {
                     </div>
                   </div>
                 ) : (
-                  <div>no data found</div>
+                  <div
+                    style={{
+                      boxSizing: 'border-box',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      padding: '40px 0',
+                    }}
+                  >
+                    no data found
+                  </div>
                 )}
               </div>
             )}
