@@ -24,6 +24,11 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Box,
+  Select,
+  InputLabel,
+  FormControl,
+  TextField,
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -35,6 +40,9 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import axios from 'axios';
 import { urls } from 'src/layouts/dashboard/nav/config';
 import { useAuthContext } from 'src/routes';
+import { Select as Selected } from '@material-ui/core';
+import CustomSelectDropdown from 'src/utils/CustomSelectDropdown';
+import FacultyDepartmentDropdown from 'src/utils/FacultyDepartmentDropdown';
 
 // ----------------------------------------------------------------------
 
@@ -80,6 +88,7 @@ function applySortFilter(array, comparator, query) {
 export default function UserPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [user, setUser] = useState({});
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     department: '',
@@ -87,6 +96,7 @@ export default function UserPage() {
     email: '',
     password: '',
     status: '',
+    accessLevel: '',
   });
 
   const [USERLIST, setUSERLIST] = useState([]);
@@ -123,9 +133,12 @@ export default function UserPage() {
   const [selected, setSelected] = useState([]);
 
   const [orderBy, setOrderBy] = useState('name');
+  const [access, setAccess] = useState('');
 
   const [filterName, setFilterName] = useState('');
   const [selectedSecond, setSelectedSecond] = useState({});
+  const [faculties, setFaculties] = useState([]);
+  const [departments, setDepartments] = useState([]);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -151,7 +164,15 @@ export default function UserPage() {
     setOpen(event.currentTarget);
     setSelectedSecond(selectedSecond);
   };
-
+  useEffect(() => {
+    if (formData.role === roles.deans) {
+      setFormData({ ...formData, status: 'faculty' });
+    } else if (formData.role === roles.hod) {
+      setFormData({ ...formData, status: 'department' });
+    } else {
+      setFormData({ ...formData, status: 'all' });
+    }
+  }, [formData.role]);
   const handleCloseMenu = () => {
     setOpen(null);
   };
@@ -197,9 +218,24 @@ export default function UserPage() {
   const handleClickNewUser = () => {
     setShowPopup(true);
   };
+  const getNeededData = async () => {
+    const user = JSON.parse(localStorage.getItem('userDetails'));
 
+    const response = await axios.get(`http://localhost:5000/api/student/query/user`, {
+      headers: {
+        authorization: `Bearer ${user.token}`,
+      },
+    });
+    console.log({ response });
+    setFaculties(response.data.faculty);
+    setDepartments(response.data.departments);
+  };
+  useEffect(() => {
+    getNeededData();
+  }, []);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log({ name, value, roles });
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -207,20 +243,25 @@ export default function UserPage() {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    if (selectedDepartment) {
+      formData.department = selectedDepartment.name;
+      formData.accessLevel = selectedDepartment.name;
+    }
+    console.log({ formData });
     const response = await axios.post(`${urls}/api/student/create/admin`, formData);
     console.log({ response }, 'create');
 
     if (response.data.status === false) {
-      toast.error('Username/password already exists', {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      alert('Username/password already exists');
+      // toast.error('Username/password already exists', {
+      //   position: 'top-right',
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      // });
     } else {
       setUSERLIST(response.data.user);
       toast.success('User created successful!');
@@ -237,6 +278,11 @@ export default function UserPage() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+  const handleSelect = (option, value) => {
+    console.log('Selected option:', option, value);
+    setFormData({ ...formData, status: value, accessLevel: option.name });
+    // Perform any other actions you want when an option is selected
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -267,11 +313,11 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Hi, {user.name}
           </Typography>
-          {user.role === 'superrole' && (
-            <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill" />}>
-              New User
-            </Button>
-          )}
+          {/* {user.role === 'superrole' && ( */}
+          <Button variant="contained" onClick={handleClickNewUser} startIcon={<Iconify icon="eva:plus-fill" />}>
+            New User
+          </Button>
+          {/* )} */}
         </Stack>
 
         <Card className={`form-container ${showPopup ? 'opacity-reduced' : ''}`}>
@@ -390,35 +436,61 @@ export default function UserPage() {
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
                     <label htmlFor="name">Name:</label>
-                    <input
+                    <TextField
                       type="text"
-                      id="name"
+                      placeholder="Name"
                       name="name"
+                      fullWidth
+                      label="Name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
-
-                  <div className="role-group">
-                    <label htmlFor="role">Role:</label>
-                    <select
-                      id="role"
-                      name="role"
-                      value={formData.value}
-                      className="select-form"
-                      onChange={handleInputChange}
-                      required
-                    >
-                      {Object.keys(roles).map((role) => {
-                        return (
-                          <option key={roles[roles]} value={roles[role]}>
-                            {roles[role]}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
+                  <Box>
+                    <div className="role-group">
+                      <label htmlFor="role">Role:</label>
+                      <FormControl fullWidth>
+                        <InputLabel>Role</InputLabel>
+                        <Select
+                          id="Role"
+                          name="role"
+                          label="Role"
+                          labelId="demo-simple-select-label"
+                          value={formData.value}
+                          onChange={handleInputChange}
+                        >
+                          {Object.keys(roles).map((role) => {
+                            return (
+                              <MenuItem key={roles[roles]} value={roles[role]}>
+                                {roles[role]}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </div>
+                    {formData.role === roles.deans && (
+                      <div className="role-group">
+                        <label htmlFor="faculty">Faculty:</label>
+                        <CustomSelectDropdown
+                          selected={formData.accessLevel}
+                          options={faculties}
+                          onSelect={(value) => handleSelect(value, 'faculty')}
+                        />
+                      </div>
+                    )}
+                    {formData.role === roles.hod && (
+                      <div className="role-group">
+                        <label htmlFor="department">Department:</label>
+                        <FacultyDepartmentDropdown
+                          faculties={faculties}
+                          departments={departments}
+                          selectedDepartment={selectedDepartment}
+                          setSelectedDepartment={setSelectedDepartment}
+                        />
+                      </div>
+                    )}
+                  </Box>
 
                   {/* <div className="form-group">
                     <label htmlFor="department">Department:</label>
@@ -427,25 +499,29 @@ export default function UserPage() {
 
                   <div className="form-group">
                     <label htmlFor="email">Email:</label>
-                    <input
+
+                    <TextField
                       type="email"
-                      id="email"
+                      placeholder="Email"
                       name="email"
+                      fullWidth
+                      label="Email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
 
                   <div className="form-group">
                     <label htmlFor="password">Password:</label>
-                    <input
+
+                    <TextField
                       type="password"
-                      id="password"
+                      placeholder="Password"
                       name="password"
+                      fullWidth
+                      label="Password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
                   <div className="submit-btn">

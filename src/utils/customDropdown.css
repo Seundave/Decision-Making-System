@@ -1,0 +1,35 @@
+.custom-select-dropdown {
+  position: relative;
+  width: 200px;
+}
+
+.selected-option {
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+
+.option {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.option:hover {
+  background-color: #f0f0f0;
+}

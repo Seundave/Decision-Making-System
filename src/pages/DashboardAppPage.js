@@ -27,11 +27,8 @@ export default function DashboardAppPage() {
   // const { currentUser } = useContext(AuthContext);
   const { currentUser } = useAuthContext();
   const [summaryData, setSummaryData] = useState({
-    graduated: 0,
-    students: 0,
-    dlc: 0,
-    pg: 0,
-    undergraduate: 0,
+    male: '',
+    female: '',
   });
   const [otherData, setOtherData] = useState([
     { label: 'Graduated', value: 0 },
@@ -39,23 +36,40 @@ export default function DashboardAppPage() {
     { label: 'PG', value: 0 },
     { label: 'DLC', value: 0 },
   ]);
+  const [country, setCountries] = useState([
+    { label: 'Graduated', value: 0 },
+    { label: 'Undergraduate', value: 0 },
+    { label: 'PG', value: 0 },
+  ]);
   const [user, setUser] = useState({});
   const fetchData = async () => {
+    const data = JSON.parse(localStorage.getItem('userDetails'));
+    console.log({ data });
     try {
-      const response = await fetch('http://localhost:5000/api/student/get/summaryData'); // Replace with your API endpoint
+      const response = await fetch('http://localhost:5000/api/student/get/summaryData', {
+        headers: {
+          authorization: `Bearer ${data.token}`,
+        },
+      }); // Replace with your API endpoint
 
       if (response.status === 200) {
         const jsonData = await response.json();
         console.log({ jsonData }); // Check the structure of jsonData
+        const male = jsonData.results.students.filter((student) => student.gender === 'M').length;
 
+        // Filter female students
+        const female = jsonData.results.students.filter((student) => student.gender === 'F').length;
         // Assuming jsonData.results has the structure you mentioned
-        setSummaryData({
-          students: jsonData.results.students.length,
-          graduated: jsonData.results.graduated.length,
-          dlc: jsonData.results.dlc.length,
-          pg: jsonData.results.pg.length,
-          undergraduate: jsonData.results.undergraduate.length,
-        });
+        console.log({ male, female });
+        setSummaryData({ male, female, students: jsonData.results.students.length });
+        const data = jsonData.results.nationalStudents;
+        console.log();
+        setCountries(
+          Object.keys(data).map((label) => ({
+            label,
+            value: data[label],
+          }))
+        );
       } else {
         throw new Error('Request failed');
       }
@@ -69,14 +83,15 @@ export default function DashboardAppPage() {
       console.log({ response });
       if (response.status === 200) {
         const jsonData = await response.json();
-        console.log(jsonData.studentDeparment);
-        const result = Object.entries(jsonData.studentDeparment).map(([departmentName, departmentInfo]) => {
-          return { label: departmentName, value: departmentInfo.students.length };
-        });
+        console.log(jsonData, 'keke');
+        const data = jsonData.facultyStudentCounts;
 
-        console.log(result);
-        // setSummaryData(jsonData.studentDeparment);
-        setOtherData(result);
+        setOtherData(
+          Object.keys(data).map((label) => ({
+            label,
+            value: data[label],
+          }))
+        );
       } else {
         throw new Error('Request failed');
       }
@@ -86,13 +101,13 @@ export default function DashboardAppPage() {
   };
 
   useEffect(() => {
-    fetchData();
-    fetchInfo();
     const data = localStorage.getItem('userDetails');
 
     if (data) {
       setUser(JSON.parse(data));
     }
+    fetchData();
+    fetchInfo();
   }, []);
   console.log({ currentUser });
 
@@ -104,7 +119,7 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi {user?.name}, Welcome back
+          Hi {user?.name}
         </Typography>
 
         <Grid container spacing={3}>
@@ -113,15 +128,11 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Number of Graduates" number={summaryData.graduated ?? 1} />
+            <AppWidgetSummary title="Total Number of Males" number={summaryData.male ?? 1} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Number of undergraduates" number={summaryData.undergraduate ?? 1} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Number of Postgraduates" number={summaryData.pg ?? 1} />
+            <AppWidgetSummary title="Total Number of Females" number={summaryData.female ?? 1} />
           </Grid>
 
           {/* <Grid item xs={12} md={6} lg={8}>
@@ -166,13 +177,8 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="ALl Students"
-              chartData={[
-                { label: 'Post Graduates', value: summaryData.pg ?? 3 },
-                { label: 'Distanc learning centre', value: summaryData.dlc ?? 4 },
-                { label: 'Graduate', value: summaryData.graduated ?? 4 },
-                { label: 'Under Graduate', value: summaryData.undergraduate ?? 3 },
-              ]}
+              title="ALL Students"
+              chartData={country}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.info.main,
@@ -183,11 +189,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates
-              title="Students per Department"
-              subheader="(+43%) than last year"
-              chartData={otherData}
-            />
+            <AppConversionRates title="Students per Faculty" subheader="(+43%) than last year" chartData={otherData} />
           </Grid>
           {/* 
           <Grid item xs={12} md={6} lg={4}>

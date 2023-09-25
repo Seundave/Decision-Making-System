@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 // @mui
 import React, { useContext } from 'react';
@@ -17,7 +17,22 @@ NavSection.propTypes = {
 export default function NavSection({ data = [], ...other }) {
   const { currentUser } = useContext(AuthContext);
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [user, setUser] = useState({});
   const location = useLocation();
+  const roles = {
+    superrole: 'Superrole',
+    principal: 'Principal',
+    director: 'Director',
+    deans: 'Deans',
+    hod: 'HOD',
+  };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('userDetails'));
+    console.log({ user });
+    // console.log(user, user.role, roles[user.role.toLowerCase()], 'kkokooeoooe');
+    // setUser(user);
+  }, []);
 
   // const handleDropdownToggle = () => {
   //   setOpenDropdown(!openDropdown);
@@ -35,26 +50,6 @@ export default function NavSection({ data = [], ...other }) {
   //   hod: 'hod',
   // };
 
-  const Navitems = ({ item }) => {
-    let categoryNavs;
-
-    if (item.title === 'category') {
-      return (categoryNavs = (
-        <>
-          <NavItem key={item.title} item={item} clicked={() => setOpenDropdown(!openDropdown)} />
-          {openDropdown && item.dropdownItems.map((el) => <NavItem key={el.title} item={el} />)}
-        </>
-      ));
-    }
-
-    return (
-      <>
-        {categoryNavs}
-        <NavItem key={item.title} item={item} />
-      </>
-    );
-  };
-
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
@@ -71,9 +66,13 @@ export default function NavSection({ data = [], ...other }) {
                 {openDropdown && item.dropdownItems.map((el) => <NavItem key={el.title} item={el} />)}
               </>
             );
-          }
-
-          return <NavItem key={item.title} item={item} />;
+          } else if (
+            item.title === 'user' &&
+            roles[user.role?.toLowerCase()] !== 'Deans' &&
+            roles[user.role?.toLowerCase()] !== 'HOD'
+          ) {
+            return <NavItem key={item.title} item={item} />;
+          } else if (item.title !== 'user') return <NavItem key={item.title} item={item} />;
 
           //   <>
           //  {item.title ==='user' && roles.superrole !== 'deans' ?null : <NavItem key={item.title} item={item} />}
@@ -94,7 +93,6 @@ export default function NavSection({ data = [], ...other }) {
           //   <NavItem key={item.title} item={item} />
           // )}
         }
-        )}
       </List>
     </Box>
   );
