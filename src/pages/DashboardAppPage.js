@@ -82,7 +82,7 @@ export default function DashboardAppPage() {
   };
   const fetchInfo = async () => {
     try {
-      const response = await fetch('http://localhost:3000/user/all'); // Replace with your API endpoint
+      const response = await fetch('https://ui-backend-5btz.onrender.com/user/all'); // Replace with your API endpoint
 
       if (response.status === 200) {
         const jsonData = await response.json();

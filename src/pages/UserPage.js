@@ -114,7 +114,7 @@ export default function UserPage() {
 
   const getUserList = async () => {
     const data = localStorage.getItem('userDetails');
-    const response = await axios.get(`http://localhost:3000/user/users`, {
+    const response = await axios.get(`https://ui-backend-5btz.onrender.com/user/users`, {
       // headers: {
       //   authorization: `Bearer ${JSON.parse(data).token}`,
       // },
@@ -220,7 +220,7 @@ export default function UserPage() {
   const getNeededData = async () => {
     const user = JSON.parse(localStorage.getItem('userDetails'));
 
-    const response = await axios.get(`http://localhost:3000/user/users`, {
+    const response = await axios.get(`https://ui-backend-5btz.onrender.com/user/users`, {
       // headers: {
       //   authorization: `Bearer ${user.token}`,
       // },
@@ -247,7 +247,7 @@ export default function UserPage() {
       formData.accessLevel = selectedDepartment.name;
     }
     console.log({ formData });
-    const response = await axios.post(`http://localhost:3000/user/signup`, formData);
+    const response = await axios.post(`https://ui-backend-5btz.onrender.com/user/signup`, formData);
     console.log({ response }, 'create');
 
     if (response.data.status === false) {

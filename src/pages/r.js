@@ -29,6 +29,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { multipleSelectList } from '../utils/utilData';
 import { MenuProps, useStyles, options as optionsData } from './utils';
 import ChartComponent from './ChartComponent';
+import Spinner from 'src/components/spinner/Spinner';
 
 const options = [
   { value: 'fullname', label: 'Name' },
@@ -91,7 +92,7 @@ export default function BlogPage() {
       ]);
     }
     setUser(user);
-    const response = await axios.get(`http://localhost:3000/user/initial-data`, {
+    const response = await axios.get(`https://ui-backend-5btz.onrender.com/user/initial-data`, {
       headers: {
         authorization: `Bearer ${user.token}`,
       },
@@ -169,7 +170,7 @@ export default function BlogPage() {
       setLoading(true);
       setShowPopup(true);
 
-      const response = await axios.post('http://localhost:3000/user/filter', {
+      const response = await axios.post('https://ui-backend-5btz.onrender.com/user/filter', {
         formData,
         generalField: generalField,
         selectedOptions: selectformData.length ? selectformData.map((opts) => opts.value) : ['fullname'],
@@ -477,7 +478,9 @@ export default function BlogPage() {
             {showPopup && (
               <div className="popup">
                 {loading ? (
-                  <div>spinner</div>
+                  <div>
+                    <Spinner />
+                  </div>
                 ) : resultData && resultData?.length > 0 ? (
                   <div className="report-container">
                     <h2>Report</h2>
