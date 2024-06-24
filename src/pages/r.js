@@ -4,31 +4,41 @@ import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import { Helmet } from 'react-helmet-async';
 import '../form.css';
-import { BsArrowRepeat } from 'react-icons/bs';
+import { BsArrowRepeat, BsTrash } from 'react-icons/bs';
 // @mui
-import { Grid, Button, Container, Stack, Typography, Select as MUISelect, DialogActions } from '@mui/material';
+import {
+  Grid,
+  Button,
+  Container,
+  Stack,
+  Typography,
+  Select as MUISelect,
+  DialogActions,
+  Chip,
+  OutlinedInput,
+} from '@mui/material';
+import { Select as Selected } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import { Select as Selected } from '@material-ui/core';
 
 // components
-import { lookupTable, gender, sessions, multipleSelectList } from '../utils/utilData';
+import { multipleSelectList } from '../utils/utilData';
 import { MenuProps, useStyles, options as optionsData } from './utils';
 import ChartComponent from './ChartComponent';
 
 const options = [
-  { value: 'studentFirstName', label: 'First name' },
-  { value: 'studentLastSurname', label: 'Last name' },
-  { value: 'studentMatricNum', label: 'Matric Number' },
-  { value: 'studyLevel', label: 'Level' },
+  { value: 'fullname', label: 'Name' },
+  { value: 'studentLevel', label: 'Student Level' },
+  { value: 'matricNum', label: 'Matric Number' },
+  { value: 'registrationStatus', label: 'Registration Status' },
   { value: 'gender', label: 'Gender' },
-  { value: 'faculty_id', label: 'Faculty' },
-  { value: 'department_id', label: 'Department' },
-  { value: 'email', label: 'email' },
+  { value: 'maritalStatus', label: 'Marital Status' },
+  { value: 'departmentID', label: 'Department' },
+  { value: 'facultyID', label: 'Faculty' },
 ];
 
 // ----------------------------------------------------------------------
@@ -44,43 +54,49 @@ export default function BlogPage() {
   const [states, setStates] = useState([]);
   const [countries, setCountries] = useState([]);
   const [bottomRow, setBottomRow] = useState([
-    { value: 'studyLevel', label: 'Study Level' },
-    { value: 'department_id', label: 'department' },
-    { value: 'faculty_id', label: 'faculty' },
+    { value: 'studentLevel', label: 'Student Level' },
+    { value: 'departmentID', label: 'Department' },
+    { value: 'facultyID', label: 'Faculty' },
   ]);
   const [user, setUser] = useState({});
   const getNeededData = async () => {
-    const user = JSON.parse(localStorage.getItem('userDetails'));
+    // const user = JSON.parse(localStorage.getItem('userDetails'));
+    const user = { role: roles.deans };
     console.log({ user });
     if (user.role === roles.deans) {
       setSelectConditions([
-        { value: 'studentFirstName', label: 'First name', type: 'text' },
-        { value: 'studentMiddleName', label: 'Middle name', type: 'text' },
-        { value: 'studentLastSurname', label: 'Last name', type: 'text' },
+        { value: 'studentName', label: 'Name', type: 'text' },
         { value: 'yearOFEntryIntoUI', label: 'Year of Entry', type: 'select' },
         { value: 'session', label: 'Session', type: 'select' },
         { value: 'departmentID', label: 'Department', type: 'select' },
+        { value: 'facultyID', label: 'Faculty', type: 'select' },
         { value: 'gender', label: 'Gender', type: 'select' },
       ]);
     } else if (user.role === roles.hod) {
       setSelectConditions([
-        { value: 'studentFirstName', label: 'First name', type: 'text' },
-        { value: 'studentMiddleName', label: 'Middle name', type: 'text' },
-        { value: 'studentLastSurname', label: 'Last name', type: 'text' },
+        { value: 'studentName', label: 'Name', type: 'text' },
         { value: 'yearOFEntryIntoUI', label: 'Year of Entry', type: 'select' },
         { value: 'session', label: 'Session', type: 'select' },
         { value: 'gender', label: 'Gender', type: 'select' },
       ]);
+    } else {
+      setSelectConditions([
+        { value: 'studentName', label: 'Name', type: 'text' },
+
+        { value: 'yearOFEntryIntoUI', label: 'Year of Entry', type: 'select' },
+        { value: 'session', label: 'Session', type: 'select' },
+        { value: 'departmentID', label: 'Department', type: 'select' },
+        { value: 'facultyID', label: 'Faculty', type: 'select' },
+        { value: 'gender', label: 'Gender', type: 'select' },
+      ]);
     }
     setUser(user);
-    console.log({ user }, 'jjjdjdj');
-    const response = await axios.get(`http://localhost:5000/api/student/query/initial`, {
+    const response = await axios.get(`http://localhost:3000/user/initial-data`, {
       headers: {
         authorization: `Bearer ${user.token}`,
       },
     });
-    console.log({ response });
-    setFaculties(response.data.faculty);
+    setFaculties(response.data.faculties);
     setDepartments(response.data.departments);
     setCountries(response.data.countries);
     setStates(response.data.states);
@@ -92,37 +108,59 @@ export default function BlogPage() {
 
   const [showPopup, setShowPopup] = useState(false);
   const [resultData, setResultData] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showChartPopup, setShowChartPopup] = useState(false);
-  const [selectformData, setSelectFormData] = useState();
+  const [selectformData, setSelectFormData] = useState([]);
   const [selectedChart, setSelectedChart] = useState('bar');
   const [selectedCategory, setSelectedCategory] = useState('faculty');
-  const [conditionData, setConditionData] = useState([]);
   const [showInputText, setShowInputText] = useState(false);
-  const [operator, setOperator] = useState([]);
+  const [operator, setOperator] = useState([
+    { value: '=', key: 'Equal To' },
+    { value: '<', key: 'Less Than' },
+    { value: '>', key: 'Greater Than' },
+  ]);
   const [selectConditions, setSelectConditions] = useState(multipleSelectList);
-  const [showOperator, setSHowOperator] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    condition: '',
-    operator: '',
-    value: '',
-    field: 'studyLevel',
-    ascending: '',
-    text: '',
-  });
+
+  const [generalField, setGeneralField] = useState('studentLevel');
+  const [formData, setFormData] = useState([
+    {
+      id: 1,
+      name: '',
+      category: '',
+      condition: '',
+      operator: false,
+      showOperator: false,
+      value: '',
+      ascending: '',
+      text: '',
+      type: 'input',
+      selectedValues: [],
+      selected: [],
+      isAllSelected: false,
+    },
+  ]);
 
   const [selected, setSelected] = useState([]);
-  const isAllSelected = conditionData.length > 0 && selected.length === conditionData.length;
 
-  const handleMultipleChange = (event) => {
+  const handleMultipleChange = (id, event) => {
     const value = event.target.value;
+    console.log({ value });
     if (value[value.length - 1] === 'all') {
-      setSelected(selected.length === conditionData.length ? [] : conditionData.map((c) => c.value));
+      setFormData(
+        formData.map((form) =>
+          form.id === id
+            ? {
+                ...form,
+                selectedValues: form.selectedValues.length === form.selected.length ? [] : form.selected,
+              }
+            : form
+        )
+      );
       return;
     }
-    setSelected(value);
+    setFormData(formData.map((form) => (form.id === id ? { ...form, selectedValues: value ?? [] } : form)));
+    setSelectedValues(value);
   };
 
   const handleClick = async () => {
@@ -130,42 +168,22 @@ export default function BlogPage() {
     try {
       setLoading(true);
       setShowPopup(true);
-      console.log({ formData });
-      const selectedData = selectformData;
-      console.log({ selectedData });
-      if (!selectedData.find((data) => data.value === formData.field) && formData.field !== '') {
-        selectedData.push({ value: formData.field });
-      }
-      const requestObject = selectedData.map((data) => `${data.value}`);
-      const table = lookupTable[formData.condition].name;
-      const columns = lookupTable[formData.condition].common;
-      console.log({ selectedData, selectformData, requestObject, table, columns, selected });
-      // try {
-      console.log({ user });
-      const bodyData = {
-        selectedFields: requestObject,
-        selectionType: columns,
-        selections: selected,
-        userRole: user.role,
-        facultyName: user.accessLevel ?? '',
-        departmentName: user.accessLevel ?? '',
-      };
-      console.log({ bodyData });
-      const response = await axios.post(`http://localhost:5000/api/student/get/table`, bodyData);
-      setResultData(response.data);
+
+      const response = await axios.post('http://localhost:3000/user/filter', {
+        formData,
+        generalField: generalField,
+        selectedOptions: selectformData.length ? selectformData.map((opts) => opts.value) : ['fullname'],
+      });
+      console.log({ response }, response.data.flattenedResults);
+      setResultData(response.data.flattenedResults);
+      setChartData(response.data.actualResult);
     } catch (e) {
       console.log(e);
     } finally {
       setLoading(false);
     }
-    // } catch (e) {
-    //   console.log({ e });
-    // }
   };
 
-  const handleSelectedCategory = (e) => {
-    setSelectedCategory(e.target.value);
-  };
   const handleChartSelect = (e) => {
     setSelectedChart(e.target.value);
   };
@@ -179,37 +197,94 @@ export default function BlogPage() {
   const handleSelectChange = (selectedOptions) => {
     // Handle selected options
     setSelectFormData(selectedOptions);
-    console.log(selectedOptions);
   };
+
+  const [selectedValues, setSelectedValues] = useState([]);
+
   const handleChange = (e) => {
+    setGeneralField(e.target.value);
+  };
+  const handleFormSelectChange = (id, e) => {
     // Handle selected options
-    const dataValue = {
-      departmentID: departments,
-      faculty: faculties,
-      gender,
-      session: sessions,
-    };
-    console.log(e.target.value, e.target.name, faculties);
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    let type,
+      showOperator,
+      value = e.target.value;
+    if (value === 'studentName') {
+      type = 'input';
+      showOperator = false;
+    } else {
+      type = 'select';
+      showOperator = true;
+    }
+    let selected = [];
     if (e.target.name === 'condition') {
       let value = e.target.value;
-      if (value === 'studentLastSurname' || value === 'studentFirstName' || value === 'studentMiddleName') {
+      if (value === 'studentName') {
         setShowInputText(true);
-        setSHowOperator(false);
       } else if (value === 'session') {
-        setSHowOperator(true);
+        setSelected([]);
+      } else if (value === 'gender') {
+        selected = ['Male', 'Female'];
+      } else if (value === 'departmentID') {
+        selected = departments.map((d) => d.departmentName);
+      } else if (value === 'facultyID') {
+        console.log({ faculties });
+        selected = faculties.map((d) => d.facultyName);
+      }
+    }
+    setFormData(
+      formData.map((form) =>
+        form.id === id ? { ...form, [e.target.name]: e.target.value, type, showOperator, selected } : form
+      )
+    );
+  };
+  const handleOperatorChange = (id, e) => {
+    setFormData(
+      formData.map((form) =>
+        form.id === id ? { ...form, [e.target.name]: e.target.value, operator: e.target.value } : form
+      )
+    );
+
+    if (e.target.name === 'condition') {
+      let value = e.target.value;
+      if (value === 'studentName') {
+        setShowInputText(true);
+      } else {
         setShowInputText(true);
         setOperator([
           { value: '=', key: 'Equal To' },
           { value: '<', key: 'Less Than' },
           { value: '>', key: 'Greater Than' },
         ]);
-      } else {
-        setShowInputText(false);
-        console.log(dataValue[e.target.value]);
-        setConditionData(dataValue[e.target.value]);
       }
     }
+  };
+
+  const removeForm = (id) => {
+    const newFormData = formData.filter((form) => form.id !== id);
+    setFormData(newFormData);
+  };
+
+  const addNewForm = () => {
+    const lastIndex = formData.length > 0 ? formData[formData.length - 1].id : 0;
+    console.log({ lastIndex });
+    const newFormData = {
+      id: lastIndex + 1,
+      name: '',
+      category: '',
+      condition: '',
+      operator: '',
+      showOperator: false,
+      value: '',
+      ascending: '',
+      text: '',
+      type: 'input',
+      selected: [],
+      selectedValues: [],
+      isAllSelected: false,
+    };
+    setFormData([...formData, newFormData]);
   };
 
   // const handleChange = (e) => {
@@ -222,6 +297,8 @@ export default function BlogPage() {
     console.log(formData);
   };
   console.log({ optionsData });
+
+  const generateChartReport = () => {};
   return (
     <>
       <Helmet>
@@ -266,95 +343,128 @@ export default function BlogPage() {
               />
             </div>
             <div className="line" />
-            <div className="form-group middle">
-              <label htmlFor="email">Field Conditions</label>
-              <select
-                id="condition"
-                name="condition"
-                value={formData.condition}
-                onChange={(e) => {
-                  setSelected([]);
-                  handleChange(e);
-                }}
-                required
-              >
-                <option value="">Select conditions</option>
-                {selectConditions.map((c) => (
-                  <option value={c.value}>{c.label}</option>
-                ))}
-              </select>
-
-              {showOperator && (
-                <select id="operator" name="operator" value={formData.operator} onChange={handleChange} required>
-                  <option value="">Operator</option>
-                  {operator.map((item, index) => (
-                    <option value={item.value}>{item.key}</option>
-                  ))}
-                </select>
-              )}
-              {!showInputText ? (
-                <FormControl className={classes.formControl}>
-                  <InputLabel id="mutiple-select-label">Multiple Select</InputLabel>
-                  <Selected
-                    labelId="mutiple-select-label"
-                    multiple
-                    value={selected.map((item) => item)}
-                    onChange={handleMultipleChange}
-                    renderValue={(selected) => selected.map((item) => item).join(', ')}
-                    MenuProps={MenuProps}
+            <h5>Select Conditions</h5>
+            {formData.map((formDataItem) => {
+              return (
+                <div
+                  key={formDataItem.id}
+                  className="form-group middle"
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <select
+                    id="condition"
+                    name="condition"
+                    style={{ height: '40px', maxWidth: '50%' }}
+                    value={formDataItem.condition}
+                    onChange={(e) => {
+                      setSelected([]);
+                      handleFormSelectChange(formDataItem.id, e);
+                    }}
+                    required
                   >
-                    <MenuItem
-                      value="all"
-                      classes={{
-                        root: isAllSelected ? classes.selectedAll : '',
-                      }}
+                    <option value="">Select conditions</option>
+                    {selectConditions.map((c) => (
+                      <option value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+
+                  {/* {formDataItem.showOperator && (
+                    <select
+                      style={{ height: '40px', maxWidth: '50%' }}
+                      id="operator"
+                      name="operator"
+                      value={formData.operator}
+                      onChange={(e) => handleOperatorChange(formDataItem.id, e)}
+                      required
                     >
-                      <ListItemIcon>
-                        <Checkbox
-                          classes={{ indeterminate: classes.indeterminateColor }}
-                          checked={isAllSelected}
-                          indeterminate={selected.length > 0 && selected.length < options.length}
+                      <option value="">Operator</option>
+                      {operator.map((item, index) => (
+                        <option value={item.value}>{item.key}</option>
+                      ))}
+                    </select>
+                  )} */}
+                  <div>
+                    {formDataItem.type === 'select' ? (
+                      <FormControl className={classes.formControl} style={{ marginTop: '-10px', minWidth: '100%' }}>
+                        <InputLabel id="mutiple-select-label">Multiple Select</InputLabel>
+                        <Selected
+                          labelId="mutiple-select-label"
+                          multiple
+                          value={formDataItem.selectedValues}
+                          onChange={(e) => handleMultipleChange(formDataItem.id, e)}
+                          renderValue={(selectedValues) => selectedValues.join(', ')}
+                          MenuProps={MenuProps}
+                        >
+                          <MenuItem
+                            value="all"
+                            classes={{
+                              root: formDataItem.isAllSelected ? classes.selectedAll : '',
+                            }}
+                          >
+                            <ListItemIcon>
+                              <Checkbox
+                                classes={{ indeterminate: classes.indeterminateColor }}
+                                checked={formDataItem.isAllSelected}
+                                indeterminate={
+                                  formDataItem.selectedValues.length > 0 &&
+                                  formDataItem.selectedValues.length < formDataItem.selected.length
+                                }
+                              />
+                            </ListItemIcon>
+                            <ListItemText classes={{ primary: classes.selectAllText }} primary="Select All" />
+                          </MenuItem>
+                          {formDataItem.selected.map((option, id) => (
+                            <MenuItem key={id} value={option}>
+                              <ListItemIcon>
+                                <Checkbox checked={formDataItem.selectedValues.indexOf(option) > -1} />
+                              </ListItemIcon>
+                              <ListItemText primary={option} />
+                            </MenuItem>
+                          ))}
+                        </Selected>
+                      </FormControl>
+                    ) : (
+                      <div style={{ minWidth: '100%' }}>
+                        <input
+                          type="text"
+                          id="text"
+                          // style={{ width: '50%' }}
+                          style={{ height: '40px', minWidth: '200px' }}
+                          name="text"
+                          value={formDataItem.text}
+                          onChange={(e) => {
+                            const newFormData = formData.map((form) => {
+                              if (form.id === formDataItem.id) {
+                                return { ...form, text: e.target.value };
+                              } else {
+                                return form;
+                              }
+                            });
+                            console.log({ newFormData });
+                            setFormData(newFormData);
+                          }}
+                          required
                         />
-                      </ListItemIcon>
-                      <ListItemText classes={{ primary: classes.selectAllText }} primary="Select All" />
-                    </MenuItem>
-                    {conditionData.map((option, index) => {
-                      return (
-                        <MenuItem key={index} value={option.name}>
-                          <ListItemIcon>
-                            <Checkbox checked={selected.indexOf(option.name) > -1} />
-                          </ListItemIcon>
-                          <ListItemText primary={option.name} />
-                        </MenuItem>
-                      );
-                    })}
-                  </Selected>
-                </FormControl>
-              ) : (
-                <input
-                  type="text"
-                  id="text"
-                  style={{ width: '50%' }}
-                  name="text"
-                  value={formData.text}
-                  onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
-                  required
-                />
-              )}
-            </div>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Button onClick={() => removeForm(formDataItem.id)}>
+                      <BsTrash />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+            <Button onClick={addNewForm}>Add new Form </Button>
             <div className="line" />
             <div className="form-group">
               <label htmlFor="message">Sort Fields</label>
-              <select id="field" name="field" value={formData.field} onChange={handleChange} required>
+              <select id="field" name="generalField" value={generalField} onChange={handleChange} required>
                 <option value="">Select Fields</option>
                 {bottomRow.map((item, index) => (
                   <option value={item.value}>{item.label}</option>
                 ))}
-              </select>
-
-              <select id="ascending" name="ascending" value={formData.message} onChange={handleChange} required>
-                <option value="Ascending">Ascending</option>
-                <option value="Descending">Descending</option>
               </select>
             </div>
             <div className="line" />
@@ -465,6 +575,7 @@ export default function BlogPage() {
                       <ChartComponent
                         xAxis={formData.field}
                         data={resultData}
+                        chartData={chartData}
                         selectedChart={selectedChart}
                         selectedCategory={selectedCategory}
                       />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 
-export function Charts({ selectedChart, selectedCategory, xAxis, data }) {
+export function Charts({ selectedChart, chartData, selectedCategory, xAxis, data }) {
   const [state, setState] = useState({
     options: {
       colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
@@ -35,21 +35,9 @@ export function Charts({ selectedChart, selectedCategory, xAxis, data }) {
       studyLevel,
       count,
     }));
-    console.log({ selectedCategory, selectedChart });
-    const getSeriesData = (category) => {
-      switch (category) {
-        case 'faculty':
-          return [
-            {
-              name: '',
-              data: newArray.map((d) => d.count),
-            },
-          ];
-        default:
-          return [];
-      }
-    };
-    console.log(getSeriesData(selectedCategory), newArray);
+
+    const seriesData = Object.keys(chartData).map((data, index) => chartData[data].length);
+
     setState({
       options: {
         colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
@@ -57,10 +45,10 @@ export function Charts({ selectedChart, selectedCategory, xAxis, data }) {
           id: 'basic-bar',
         },
         xaxis: {
-          categories: newArray.map((d) => d.studyLevel),
+          categories: Object.keys(chartData),
         },
       },
-      series: getSeriesData(selectedCategory),
+      series: [{ name: '', data: seriesData }],
     });
     console.log(getChartType(selectedChart));
     setChartType(getChartType(selectedChart));

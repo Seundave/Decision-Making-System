@@ -90,12 +90,12 @@ export default function UserPage() {
   const [user, setUser] = useState({});
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
     department: '',
     role: 'superrole',
     email: '',
     password: '',
-    status: '',
+    lastName: '',
     accessLevel: '',
   });
 
@@ -114,14 +114,13 @@ export default function UserPage() {
 
   const getUserList = async () => {
     const data = localStorage.getItem('userDetails');
-    const response = await axios.get(`${urls}/api/student/users`, {
-      headers: {
-        authorization: `Bearer ${JSON.parse(data).token}`,
-      },
+    const response = await axios.get(`http://localhost:3000/user/users`, {
+      // headers: {
+      //   authorization: `Bearer ${JSON.parse(data).token}`,
+      // },
     });
-    if (response.data.status) {
-      setUSERLIST(response.data.user);
-    }
+
+    setUSERLIST(response.data);
   };
 
   const [open, setOpen] = useState(null);
@@ -221,14 +220,14 @@ export default function UserPage() {
   const getNeededData = async () => {
     const user = JSON.parse(localStorage.getItem('userDetails'));
 
-    const response = await axios.get(`http://localhost:5000/api/student/query/user`, {
-      headers: {
-        authorization: `Bearer ${user.token}`,
-      },
+    const response = await axios.get(`http://localhost:3000/user/users`, {
+      // headers: {
+      //   authorization: `Bearer ${user.token}`,
+      // },
     });
     console.log({ response });
-    setFaculties(response.data.faculty);
-    setDepartments(response.data.departments);
+    // setFaculties(response.data.faculty);
+    // setDepartments(response.data.departments);
   };
   useEffect(() => {
     getNeededData();
@@ -248,7 +247,7 @@ export default function UserPage() {
       formData.accessLevel = selectedDepartment.name;
     }
     console.log({ formData });
-    const response = await axios.post(`${urls}/api/student/create/admin`, formData);
+    const response = await axios.post(`http://localhost:3000/user/signup`, formData);
     console.log({ response }, 'create');
 
     if (response.data.status === false) {
@@ -345,7 +344,8 @@ export default function UserPage() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // const { id, name, role, status, department, email, password, avatarUrl } = row;
-                    const { email, role, name } = row;
+                    const { email, role, firstName, lastName } = row;
+                    console.log({ email, role, firstName, lastName });
                     const selectedUser = selected.indexOf(email) !== -1;
 
                     return (
@@ -356,9 +356,9 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={''} />
+                            <Avatar alt={firstName} src={''} />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {firstName} {lastName}
                             </Typography>
                           </Stack>
                         </TableCell>
@@ -377,7 +377,7 @@ export default function UserPage() {
                           <IconButton
                             size="large"
                             color="inherit"
-                            onClick={(e) => handleOpenMenu(e, { email, name, role })}
+                            onClick={(e) => handleOpenMenu(e, { email, firstName, role })}
                           >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
@@ -435,14 +435,26 @@ export default function UserPage() {
                 <h1>Create a user </h1>
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
-                    <label htmlFor="name">Name:</label>
+                    <label htmlFor="name">First Name:</label>
                     <TextField
                       type="text"
-                      placeholder="Name"
-                      name="name"
+                      placeholder="First Name"
+                      name="firstName"
                       fullWidth
-                      label="Name"
-                      value={formData.name}
+                      label="First Name"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="LastName">Last Name:</label>
+                    <TextField
+                      type="text"
+                      placeholder="Last Name"
+                      name="lastName"
+                      fullWidth
+                      label="Last Name"
+                      value={formData.lastName}
                       onChange={handleInputChange}
                     />
                   </div>
