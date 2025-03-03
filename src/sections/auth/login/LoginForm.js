@@ -44,13 +44,13 @@ export default function LoginForm() {
 
   const handleClick = async (data) => {
     console.log({ data, urls });
-    const user = await axios.post(`${urls}/api/student/signin`, {
+    const user = await axios.post(`${urls}/user/signin`, {
       email: data.email,
       password: data.password,
     });
     console.log({ user });
 
-    if (user.status === 200) {
+    if (user.status === 201) {
       localStorage.setItem('userDetails', JSON.stringify(user.data));
       toast.success('Login successful!', {
         position: 'top-right',

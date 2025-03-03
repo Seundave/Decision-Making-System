@@ -20,6 +20,7 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext, useAuthContext } from 'src/routes';
 import { Box } from '@material-ui/core';
+import { urls } from 'src/layouts/dashboard/nav/config';
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +50,7 @@ export default function DashboardAppPage() {
     const data = JSON.parse(localStorage.getItem('userDetails'));
     console.log({ data });
     try {
-      const response = await fetch('http://localhost:5000/api/student/get/summaryData', {
+      const response = await fetch(`${urls}/api/student/get/summaryData`, {
         headers: {
           authorization: `Bearer ${data.token}`,
         },
@@ -82,8 +83,8 @@ export default function DashboardAppPage() {
   };
   const fetchInfo = async () => {
     try {
-      const response = await fetch('https://ui-backend-5btz.onrender.com/user/all'); // Replace with your API endpoint
-
+      const response = await fetch(`${urls}/user/all`); // Replace with your API endpoint
+      console.log({ response });
       if (response.status === 200) {
         const jsonData = await response.json();
         console.log(jsonData, 'keke');

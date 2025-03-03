@@ -30,6 +30,7 @@ import { multipleSelectList } from '../utils/utilData';
 import { MenuProps, useStyles, options as optionsData } from './utils';
 import ChartComponent from './ChartComponent';
 import Spinner from 'src/components/spinner/Spinner';
+import { urls } from 'src/layouts/dashboard/nav/config';
 
 const options = [
   { value: 'fullname', label: 'Name' },
@@ -92,7 +93,7 @@ export default function BlogPage() {
       ]);
     }
     setUser(user);
-    const response = await axios.get(`https://ui-backend-5btz.onrender.com/user/initial-data`, {
+    const response = await axios.get(`${urls}/user/initial-data`, {
       headers: {
         authorization: `Bearer ${user.token}`,
       },
@@ -170,7 +171,7 @@ export default function BlogPage() {
       setLoading(true);
       setShowPopup(true);
 
-      const response = await axios.post('https://ui-backend-5btz.onrender.com/user/filter', {
+      const response = await axios.post(`${urls}/user/filter`, {
         formData,
         generalField: generalField,
         selectedOptions: selectformData.length ? selectformData.map((opts) => opts.value) : ['fullname'],
